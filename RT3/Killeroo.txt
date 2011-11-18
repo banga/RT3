@@ -1,0 +1,29 @@
+Film{
+	width 400
+	height 400
+	samples 16
+	background [0 0 0]
+}
+Camera{
+	Perspective{
+		origin <20,5,-30>
+		up <0,1,0>
+		right <1.33,0,0>
+		fov 40
+	}
+	look_at <0,-5,0>
+}
+Disc{
+	<0,-15,0> y 100
+	Material { 
+		kd Checker { [0] [1] scale <10,8,0> }
+	}
+}
+PointLight{
+	<25,25,-20> [5]
+}
+Mesh{
+	leafsize 128
+	"C:\~\C\My Documents\Visual Studio 2005\Projects\RT2\models\objx4\objx4.obj"
+	Material { kd [1 0 0] ka [0.5 0 0] reflect [0] }
+}

@@ -1,0 +1,303 @@
+Grammar
+
+    0 $accept: input $end
+
+    1 input: /* empty */
+    2      | input line
+
+    3 line: NEWLINE
+    4     | expr NEWLINE
+
+    5 expr: expr PLUS term
+    6     | expr MINUS term
+    7     | term
+
+    8 term: term ASTERISK factor
+    9     | factor
+
+   10 factor: LPAREN expr RPAREN
+   11       | vector
+
+   12 vector: LANG number COMMA number COMMA number RANG
+
+   13 number: NUMBER
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NEWLINE (258) 3 4
+PLUS (259) 5
+MINUS (260) 6
+ASTERISK (261) 8
+LPAREN (262) 10
+RPAREN (263) 10
+LANG (264) 12
+RANG (265) 12
+COMMA (266) 12
+NUMBER (267) 13
+
+
+Nonterminals, with rules where they appear
+
+$accept (13)
+    on left: 0
+input (14)
+    on left: 1 2, on right: 0 2
+line (15)
+    on left: 3 4, on right: 2
+expr (16)
+    on left: 5 6 7, on right: 4 5 6 10
+term (17)
+    on left: 8 9, on right: 5 6 7 8
+factor (18)
+    on left: 10 11, on right: 8 9
+vector (19)
+    on left: 12, on right: 11
+number (20)
+    on left: 13, on right: 12
+
+
+state 0
+
+    0 $accept: . input $end
+
+    $default  reduce using rule 1 (input)
+
+    input  go to state 1
+
+
+state 1
+
+    0 $accept: input . $end
+    2 input: input . line
+
+    $end     shift, and go to state 2
+    NEWLINE  shift, and go to state 3
+    LPAREN   shift, and go to state 4
+    LANG     shift, and go to state 5
+
+    line    go to state 6
+    expr    go to state 7
+    term    go to state 8
+    factor  go to state 9
+    vector  go to state 10
+
+
+state 2
+
+    0 $accept: input $end .
+
+    $default  accept
+
+
+state 3
+
+    3 line: NEWLINE .
+
+    $default  reduce using rule 3 (line)
+
+
+state 4
+
+   10 factor: LPAREN . expr RPAREN
+
+    LPAREN  shift, and go to state 4
+    LANG    shift, and go to state 5
+
+    expr    go to state 11
+    term    go to state 8
+    factor  go to state 9
+    vector  go to state 10
+
+
+state 5
+
+   12 vector: LANG . number COMMA number COMMA number RANG
+
+    NUMBER  shift, and go to state 12
+
+    number  go to state 13
+
+
+state 6
+
+    2 input: input line .
+
+    $default  reduce using rule 2 (input)
+
+
+state 7
+
+    4 line: expr . NEWLINE
+    5 expr: expr . PLUS term
+    6     | expr . MINUS term
+
+    NEWLINE  shift, and go to state 14
+    PLUS     shift, and go to state 15
+    MINUS    shift, and go to state 16
+
+
+state 8
+
+    7 expr: term .
+    8 term: term . ASTERISK factor
+
+    ASTERISK  shift, and go to state 17
+
+    $default  reduce using rule 7 (expr)
+
+
+state 9
+
+    9 term: factor .
+
+    $default  reduce using rule 9 (term)
+
+
+state 10
+
+   11 factor: vector .
+
+    $default  reduce using rule 11 (factor)
+
+
+state 11
+
+    5 expr: expr . PLUS term
+    6     | expr . MINUS term
+   10 factor: LPAREN expr . RPAREN
+
+    PLUS    shift, and go to state 15
+    MINUS   shift, and go to state 16
+    RPAREN  shift, and go to state 18
+
+
+state 12
+
+   13 number: NUMBER .
+
+    $default  reduce using rule 13 (number)
+
+
+state 13
+
+   12 vector: LANG number . COMMA number COMMA number RANG
+
+    COMMA  shift, and go to state 19
+
+
+state 14
+
+    4 line: expr NEWLINE .
+
+    $default  reduce using rule 4 (line)
+
+
+state 15
+
+    5 expr: expr PLUS . term
+
+    LPAREN  shift, and go to state 4
+    LANG    shift, and go to state 5
+
+    term    go to state 20
+    factor  go to state 9
+    vector  go to state 10
+
+
+state 16
+
+    6 expr: expr MINUS . term
+
+    LPAREN  shift, and go to state 4
+    LANG    shift, and go to state 5
+
+    term    go to state 21
+    factor  go to state 9
+    vector  go to state 10
+
+
+state 17
+
+    8 term: term ASTERISK . factor
+
+    LPAREN  shift, and go to state 4
+    LANG    shift, and go to state 5
+
+    factor  go to state 22
+    vector  go to state 10
+
+
+state 18
+
+   10 factor: LPAREN expr RPAREN .
+
+    $default  reduce using rule 10 (factor)
+
+
+state 19
+
+   12 vector: LANG number COMMA . number COMMA number RANG
+
+    NUMBER  shift, and go to state 12
+
+    number  go to state 23
+
+
+state 20
+
+    5 expr: expr PLUS term .
+    8 term: term . ASTERISK factor
+
+    ASTERISK  shift, and go to state 17
+
+    $default  reduce using rule 5 (expr)
+
+
+state 21
+
+    6 expr: expr MINUS term .
+    8 term: term . ASTERISK factor
+
+    ASTERISK  shift, and go to state 17
+
+    $default  reduce using rule 6 (expr)
+
+
+state 22
+
+    8 term: term ASTERISK factor .
+
+    $default  reduce using rule 8 (term)
+
+
+state 23
+
+   12 vector: LANG number COMMA number . COMMA number RANG
+
+    COMMA  shift, and go to state 24
+
+
+state 24
+
+   12 vector: LANG number COMMA number COMMA . number RANG
+
+    NUMBER  shift, and go to state 12
+
+    number  go to state 25
+
+
+state 25
+
+   12 vector: LANG number COMMA number COMMA number . RANG
+
+    RANG  shift, and go to state 26
+
+
+state 26
+
+   12 vector: LANG number COMMA number COMMA number RANG .
+
+    $default  reduce using rule 12 (vector)

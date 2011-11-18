@@ -1,0 +1,4081 @@
+Terminals unused in grammar
+
+   NEWLINE
+   variable
+
+
+Rules useless in parser due to conflicts
+
+   27 number_float: IDENTIFIER
+
+   38 vector: IDENTIFIER
+
+   55 spectrum: IDENTIFIER
+
+  103 light: IDENTIFIER
+
+
+State 4 conflicts: 15 reduce/reduce
+State 60 conflicts: 35 reduce/reduce
+State 85 conflicts: 19 reduce/reduce
+State 90 conflicts: 20 reduce/reduce
+State 94 conflicts: 19 reduce/reduce
+State 118 conflicts: 43 reduce/reduce
+State 142 conflicts: 24 reduce/reduce
+State 146 conflicts: 5 reduce/reduce
+
+
+Grammar
+
+    0 $accept: input $end
+
+    1 input: /* empty */
+    2      | input declaration
+
+    3 declaration: image
+    4            | camera
+    5            | object
+    6            | light
+    7            | variable_declaration
+
+    8 expr: expr PLUS term
+    9     | expr MINUS term
+   10     | term
+
+   11 term: term ASTERISK number_integer
+   12     | term SLASH number_integer
+   13     | factor
+
+   14 factor: LPAREN expr RPAREN
+   15       | number_integer
+
+   16 number_integer: NUMBER_INTEGER
+   17               | IDENTIFIER
+
+   18 float_expr: float_expr PLUS float_term
+   19           | float_expr MINUS float_term
+   20           | float_term
+
+   21 float_term: float_term ASTERISK number
+   22           | float_term SLASH number
+   23           | float_factor
+
+   24 float_factor: LPAREN float_expr RPAREN
+   25             | number
+
+   26 number_float: NUMBER_FLOAT
+   27             | IDENTIFIER
+
+   28 number: number_float
+   29       | number_integer
+
+   30 vector_expr: vector_expr PLUS vector_term
+   31            | vector_expr MINUS vector_term
+   32            | vector_term
+
+   33 vector_term: vector_term ASTERISK number
+   34            | vector_factor
+
+   35 vector_factor: LPAREN vector_expr RPAREN
+   36              | vector
+
+   37 vector: vector_declaration
+   38       | IDENTIFIER
+
+   39 vector_declaration: LANG number COMMA number COMMA number RANG
+   40                   | LANG number number number RANG
+   41                   | XVECTOR
+   42                   | YVECTOR
+   43                   | ZVECTOR
+   44                   | number
+
+   45 spectrum_expr: spectrum_expr PLUS spectrum_term
+   46              | spectrum_expr MINUS spectrum_term
+   47              | spectrum_term
+
+   48 spectrum_term: spectrum_term ASTERISK number
+   49              | spectrum_factor
+
+   50 spectrum_factor: LPAREN spectrum_expr RPAREN
+   51                | spectrum
+
+   52 spectrum: LSQ number COMMA number COMMA number RSQ
+   53         | LSQ number number number RSQ
+   54         | number
+   55         | IDENTIFIER
+
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+   57 camera: CAMERA LCURL camera_declaration RCURL
+   58       | CAMERA LCURL camera_declaration CAMERA_LOOKAT vector_expr RCURL
+   59       | IDENTIFIER
+
+   60 camera_declaration: perspective_camera
+   61                   | orthographic_camera
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL
+
+   64 material: material_declaration
+   65         | IDENTIFIER
+
+   66 material_declaration: diffuse_material
+   67                     | ambient_material
+   68                     | reflective_material
+   69                     | transparent_material
+
+   70 diffuse_material: MATERIAL LCURL MATERIAL_KD spectrum_expr RCURL
+
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr RCURL
+
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+   74 object: sphere
+   75       | plane
+   76       | box
+   77       | disc
+   78       | mesh
+   79       | kdtree
+   80       | group
+   81       | transformed_object
+   82       | IDENTIFIER
+
+   83 sphere: SPHERE LCURL vector_expr float_expr material RCURL
+
+   84 plane: PLANE LCURL vector_expr float_expr material RCURL
+
+   85 box: BOX LCURL vector_expr vector_expr material RCURL
+
+   86 disc: DISC LCURL vector_expr vector_expr float_expr material RCURL
+
+   87 mesh: MESH LCURL filename material RCURL
+   88     | MESH LCURL KDTREE_LEAFSIZE expr filename material RCURL
+
+   89 filename: STRING
+
+   90 kdtree: KDTREE LCURL objects RCURL
+   91       | KDTREE LCURL KDTREE_LEAFSIZE expr objects RCURL
+
+   92 group: GROUP LCURL objects RCURL
+
+   93 objects: objects object
+   94        | object
+
+   95 transformed_object: TRANSFORMED_OBJECT LCURL object transforms RCURL
+
+   96 transforms: transforms transform
+   97           | transform
+
+   98 transform: TRANSLATE vector_expr
+   99          | ROTATE vector_expr
+  100          | SCALE vector_expr
+
+  101 light: pointlight
+  102      | trianglelight
+  103      | IDENTIFIER
+
+  104 pointlight: POINTLIGHT LCURL vector_expr spectrum_expr RCURL
+
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr vector_expr vector_expr spectrum_expr RCURL
+
+  106 variable_declaration: DOLLAR IDENTIFIER EQ expr
+  107                     | DOLLAR IDENTIFIER EQ float_expr
+  108                     | DOLLAR IDENTIFIER EQ vector_expr
+  109                     | DOLLAR IDENTIFIER EQ spectrum_expr
+  110                     | DOLLAR IDENTIFIER EQ material
+  111                     | DOLLAR IDENTIFIER EQ object
+  112                     | DOLLAR IDENTIFIER EQ light
+  113                     | DOLLAR IDENTIFIER EQ camera
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NEWLINE (258)
+PLUS (259) 8 18 30 45
+MINUS (260) 9 19 31 46
+ASTERISK (261) 11 21 33 48
+SLASH (262) 12 22
+LPAREN (263) 14 24 35 50
+RPAREN (264) 14 24 35 50
+LANG (265) 39 40
+RANG (266) 39 40
+LCURL (267) 56 57 58 62 63 70 71 72 73 83 84 85 86 87 88 90 91 92 95
+    104 105
+RCURL (268) 56 57 58 62 63 70 71 72 73 83 84 85 86 87 88 90 91 92 95
+    104 105
+LSQ (269) 52 53
+RSQ (270) 52 53
+COMMA (271) 39 52
+DOLLAR (272) 106 107 108 109 110 111 112 113
+XVECTOR (273) 41
+YVECTOR (274) 42
+ZVECTOR (275) 43
+EQ (276) 106 107 108 109 110 111 112 113
+NUMBER_INTEGER (277) 16
+NUMBER_FLOAT (278) 26
+STRING (279) 89
+IDENTIFIER (280) 17 27 38 55 59 65 82 103 106 107 108 109 110 111 112
+    113
+IMAGE (281) 56
+IMAGE_WIDTH (282) 56
+IMAGE_HEIGHT (283) 56
+IMAGE_SAMPLES (284) 56
+IMAGE_BACKGROUND (285) 56
+CAMERA (286) 57 58
+PERSPECTIVE_CAMERA (287) 62
+ORTHOGRAPHIC_CAMERA (288) 63
+CAMERA_ORIGIN (289) 62 63
+CAMERA_UP (290) 62 63
+CAMERA_RIGHT (291) 62 63
+CAMERA_ANGLE (292) 62
+CAMERA_LOOKAT (293) 58
+MATERIAL (294) 70 71 72 73
+MATERIAL_KD (295) 70 71 72 73
+MATERIAL_KA (296) 71 72 73
+MATERIAL_REFLECTED_COLOR (297) 72 73
+MATERIAL_TRANSMITTED_COLOR (298) 73
+MATERIAL_IOR (299) 73
+SPHERE (300) 83
+PLANE (301) 84
+BOX (302) 85
+DISC (303) 86
+MESH (304) 87 88
+KDTREE (305) 90 91
+KDTREE_LEAFSIZE (306) 88 91
+GROUP (307) 92
+TRANSFORMED_OBJECT (308) 95
+TRANSLATE (309) 98
+ROTATE (310) 99
+SCALE (311) 100
+POINTLIGHT (312) 104
+TRIANGLELIGHT (313) 105
+variable (314)
+
+
+Nonterminals, with rules where they appear
+
+$accept (60)
+    on left: 0
+input (61)
+    on left: 1 2, on right: 0 2
+declaration (62)
+    on left: 3 4 5 6 7, on right: 2
+expr (63)
+    on left: 8 9 10, on right: 8 9 14 56 88 91 106
+term (64)
+    on left: 11 12 13, on right: 8 9 10 11 12
+factor (65)
+    on left: 14 15, on right: 13
+number_integer (66)
+    on left: 16 17, on right: 11 12 15 29
+float_expr (67)
+    on left: 18 19 20, on right: 18 19 24 62 73 83 84 86 107
+float_term (68)
+    on left: 21 22 23, on right: 18 19 20 21 22
+float_factor (69)
+    on left: 24 25, on right: 23
+number_float (70)
+    on left: 26 27, on right: 28
+number (71)
+    on left: 28 29, on right: 21 22 25 33 39 40 44 48 52 53 54
+vector_expr (72)
+    on left: 30 31 32, on right: 30 31 35 58 62 63 83 84 85 86 98 99
+    100 104 105 108
+vector_term (73)
+    on left: 33 34, on right: 30 31 32 33
+vector_factor (74)
+    on left: 35 36, on right: 34
+vector (75)
+    on left: 37 38, on right: 36
+vector_declaration (76)
+    on left: 39 40 41 42 43 44, on right: 37
+spectrum_expr (77)
+    on left: 45 46 47, on right: 45 46 50 56 70 71 72 73 104 105 109
+spectrum_term (78)
+    on left: 48 49, on right: 45 46 47 48
+spectrum_factor (79)
+    on left: 50 51, on right: 49
+spectrum (80)
+    on left: 52 53 54 55, on right: 51
+image (81)
+    on left: 56, on right: 3
+camera (82)
+    on left: 57 58 59, on right: 4 113
+camera_declaration (83)
+    on left: 60 61, on right: 57 58
+perspective_camera (84)
+    on left: 62, on right: 60
+orthographic_camera (85)
+    on left: 63, on right: 61
+material (86)
+    on left: 64 65, on right: 83 84 85 86 87 88 110
+material_declaration (87)
+    on left: 66 67 68 69, on right: 64
+diffuse_material (88)
+    on left: 70, on right: 66
+ambient_material (89)
+    on left: 71, on right: 67
+reflective_material (90)
+    on left: 72, on right: 68
+transparent_material (91)
+    on left: 73, on right: 69
+object (92)
+    on left: 74 75 76 77 78 79 80 81 82, on right: 5 93 94 95 111
+sphere (93)
+    on left: 83, on right: 74
+plane (94)
+    on left: 84, on right: 75
+box (95)
+    on left: 85, on right: 76
+disc (96)
+    on left: 86, on right: 77
+mesh (97)
+    on left: 87 88, on right: 78
+filename (98)
+    on left: 89, on right: 87 88
+kdtree (99)
+    on left: 90 91, on right: 79
+group (100)
+    on left: 92, on right: 80
+objects (101)
+    on left: 93 94, on right: 90 91 92 93
+transformed_object (102)
+    on left: 95, on right: 81
+transforms (103)
+    on left: 96 97, on right: 95 96
+transform (104)
+    on left: 98 99 100, on right: 96 97
+light (105)
+    on left: 101 102 103, on right: 6 112
+pointlight (106)
+    on left: 104, on right: 101
+trianglelight (107)
+    on left: 105, on right: 102
+variable_declaration (108)
+    on left: 106 107 108 109 110 111 112 113, on right: 7
+
+
+state 0
+
+    0 $accept: . input $end
+
+    $default  reduce using rule 1 (input)
+
+    input  go to state 1
+
+
+state 1
+
+    0 $accept: input . $end
+    2 input: input . declaration
+
+    $end                shift, and go to state 2
+    DOLLAR              shift, and go to state 3
+    IDENTIFIER          shift, and go to state 4
+    IMAGE               shift, and go to state 5
+    CAMERA              shift, and go to state 6
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+    POINTLIGHT          shift, and go to state 15
+    TRIANGLELIGHT       shift, and go to state 16
+
+    declaration           go to state 17
+    image                 go to state 18
+    camera                go to state 19
+    object                go to state 20
+    sphere                go to state 21
+    plane                 go to state 22
+    box                   go to state 23
+    disc                  go to state 24
+    mesh                  go to state 25
+    kdtree                go to state 26
+    group                 go to state 27
+    transformed_object    go to state 28
+    light                 go to state 29
+    pointlight            go to state 30
+    trianglelight         go to state 31
+    variable_declaration  go to state 32
+
+
+state 2
+
+    0 $accept: input $end .
+
+    $default  accept
+
+
+state 3
+
+  106 variable_declaration: DOLLAR . IDENTIFIER EQ expr
+  107                     | DOLLAR . IDENTIFIER EQ float_expr
+  108                     | DOLLAR . IDENTIFIER EQ vector_expr
+  109                     | DOLLAR . IDENTIFIER EQ spectrum_expr
+  110                     | DOLLAR . IDENTIFIER EQ material
+  111                     | DOLLAR . IDENTIFIER EQ object
+  112                     | DOLLAR . IDENTIFIER EQ light
+  113                     | DOLLAR . IDENTIFIER EQ camera
+
+    IDENTIFIER  shift, and go to state 33
+
+
+state 4
+
+   59 camera: IDENTIFIER .
+   82 object: IDENTIFIER .
+  103 light: IDENTIFIER .
+
+    $end                reduce using rule 59 (camera)
+    $end                [reduce using rule 82 (object)]
+    $end                [reduce using rule 103 (light)]
+    DOLLAR              reduce using rule 59 (camera)
+    DOLLAR              [reduce using rule 82 (object)]
+    DOLLAR              [reduce using rule 103 (light)]
+    IDENTIFIER          reduce using rule 59 (camera)
+    IDENTIFIER          [reduce using rule 82 (object)]
+    IDENTIFIER          [reduce using rule 103 (light)]
+    IMAGE               reduce using rule 59 (camera)
+    IMAGE               [reduce using rule 82 (object)]
+    IMAGE               [reduce using rule 103 (light)]
+    CAMERA              reduce using rule 59 (camera)
+    CAMERA              [reduce using rule 82 (object)]
+    CAMERA              [reduce using rule 103 (light)]
+    SPHERE              reduce using rule 59 (camera)
+    SPHERE              [reduce using rule 82 (object)]
+    SPHERE              [reduce using rule 103 (light)]
+    PLANE               reduce using rule 59 (camera)
+    PLANE               [reduce using rule 82 (object)]
+    PLANE               [reduce using rule 103 (light)]
+    BOX                 reduce using rule 59 (camera)
+    BOX                 [reduce using rule 82 (object)]
+    BOX                 [reduce using rule 103 (light)]
+    DISC                reduce using rule 59 (camera)
+    DISC                [reduce using rule 82 (object)]
+    DISC                [reduce using rule 103 (light)]
+    MESH                reduce using rule 59 (camera)
+    MESH                [reduce using rule 82 (object)]
+    MESH                [reduce using rule 103 (light)]
+    KDTREE              reduce using rule 59 (camera)
+    KDTREE              [reduce using rule 82 (object)]
+    KDTREE              [reduce using rule 103 (light)]
+    GROUP               reduce using rule 59 (camera)
+    GROUP               [reduce using rule 82 (object)]
+    GROUP               [reduce using rule 103 (light)]
+    TRANSFORMED_OBJECT  reduce using rule 59 (camera)
+    TRANSFORMED_OBJECT  [reduce using rule 82 (object)]
+    TRANSFORMED_OBJECT  [reduce using rule 103 (light)]
+    POINTLIGHT          reduce using rule 59 (camera)
+    POINTLIGHT          [reduce using rule 82 (object)]
+    POINTLIGHT          [reduce using rule 103 (light)]
+    TRIANGLELIGHT       reduce using rule 59 (camera)
+    TRIANGLELIGHT       [reduce using rule 82 (object)]
+    TRIANGLELIGHT       [reduce using rule 103 (light)]
+    $default            reduce using rule 59 (camera)
+
+
+state 5
+
+   56 image: IMAGE . LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    LCURL  shift, and go to state 34
+
+
+state 6
+
+   57 camera: CAMERA . LCURL camera_declaration RCURL
+   58       | CAMERA . LCURL camera_declaration CAMERA_LOOKAT vector_expr RCURL
+
+    LCURL  shift, and go to state 35
+
+
+state 7
+
+   83 sphere: SPHERE . LCURL vector_expr float_expr material RCURL
+
+    LCURL  shift, and go to state 36
+
+
+state 8
+
+   84 plane: PLANE . LCURL vector_expr float_expr material RCURL
+
+    LCURL  shift, and go to state 37
+
+
+state 9
+
+   85 box: BOX . LCURL vector_expr vector_expr material RCURL
+
+    LCURL  shift, and go to state 38
+
+
+state 10
+
+   86 disc: DISC . LCURL vector_expr vector_expr float_expr material RCURL
+
+    LCURL  shift, and go to state 39
+
+
+state 11
+
+   87 mesh: MESH . LCURL filename material RCURL
+   88     | MESH . LCURL KDTREE_LEAFSIZE expr filename material RCURL
+
+    LCURL  shift, and go to state 40
+
+
+state 12
+
+   90 kdtree: KDTREE . LCURL objects RCURL
+   91       | KDTREE . LCURL KDTREE_LEAFSIZE expr objects RCURL
+
+    LCURL  shift, and go to state 41
+
+
+state 13
+
+   92 group: GROUP . LCURL objects RCURL
+
+    LCURL  shift, and go to state 42
+
+
+state 14
+
+   95 transformed_object: TRANSFORMED_OBJECT . LCURL object transforms RCURL
+
+    LCURL  shift, and go to state 43
+
+
+state 15
+
+  104 pointlight: POINTLIGHT . LCURL vector_expr spectrum_expr RCURL
+
+    LCURL  shift, and go to state 44
+
+
+state 16
+
+  105 trianglelight: TRIANGLELIGHT . LCURL vector_expr vector_expr vector_expr spectrum_expr RCURL
+
+    LCURL  shift, and go to state 45
+
+
+state 17
+
+    2 input: input declaration .
+
+    $default  reduce using rule 2 (input)
+
+
+state 18
+
+    3 declaration: image .
+
+    $default  reduce using rule 3 (declaration)
+
+
+state 19
+
+    4 declaration: camera .
+
+    $default  reduce using rule 4 (declaration)
+
+
+state 20
+
+    5 declaration: object .
+
+    $default  reduce using rule 5 (declaration)
+
+
+state 21
+
+   74 object: sphere .
+
+    $default  reduce using rule 74 (object)
+
+
+state 22
+
+   75 object: plane .
+
+    $default  reduce using rule 75 (object)
+
+
+state 23
+
+   76 object: box .
+
+    $default  reduce using rule 76 (object)
+
+
+state 24
+
+   77 object: disc .
+
+    $default  reduce using rule 77 (object)
+
+
+state 25
+
+   78 object: mesh .
+
+    $default  reduce using rule 78 (object)
+
+
+state 26
+
+   79 object: kdtree .
+
+    $default  reduce using rule 79 (object)
+
+
+state 27
+
+   80 object: group .
+
+    $default  reduce using rule 80 (object)
+
+
+state 28
+
+   81 object: transformed_object .
+
+    $default  reduce using rule 81 (object)
+
+
+state 29
+
+    6 declaration: light .
+
+    $default  reduce using rule 6 (declaration)
+
+
+state 30
+
+  101 light: pointlight .
+
+    $default  reduce using rule 101 (light)
+
+
+state 31
+
+  102 light: trianglelight .
+
+    $default  reduce using rule 102 (light)
+
+
+state 32
+
+    7 declaration: variable_declaration .
+
+    $default  reduce using rule 7 (declaration)
+
+
+state 33
+
+  106 variable_declaration: DOLLAR IDENTIFIER . EQ expr
+  107                     | DOLLAR IDENTIFIER . EQ float_expr
+  108                     | DOLLAR IDENTIFIER . EQ vector_expr
+  109                     | DOLLAR IDENTIFIER . EQ spectrum_expr
+  110                     | DOLLAR IDENTIFIER . EQ material
+  111                     | DOLLAR IDENTIFIER . EQ object
+  112                     | DOLLAR IDENTIFIER . EQ light
+  113                     | DOLLAR IDENTIFIER . EQ camera
+
+    EQ  shift, and go to state 46
+
+
+state 34
+
+   56 image: IMAGE LCURL . IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    IMAGE_WIDTH  shift, and go to state 47
+
+
+state 35
+
+   57 camera: CAMERA LCURL . camera_declaration RCURL
+   58       | CAMERA LCURL . camera_declaration CAMERA_LOOKAT vector_expr RCURL
+
+    PERSPECTIVE_CAMERA   shift, and go to state 48
+    ORTHOGRAPHIC_CAMERA  shift, and go to state 49
+
+    camera_declaration   go to state 50
+    perspective_camera   go to state 51
+    orthographic_camera  go to state 52
+
+
+state 36
+
+   83 sphere: SPHERE LCURL . vector_expr float_expr material RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 64
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 37
+
+   84 plane: PLANE LCURL . vector_expr float_expr material RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 69
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 38
+
+   85 box: BOX LCURL . vector_expr vector_expr material RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 70
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 39
+
+   86 disc: DISC LCURL . vector_expr vector_expr float_expr material RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 71
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 40
+
+   87 mesh: MESH LCURL . filename material RCURL
+   88     | MESH LCURL . KDTREE_LEAFSIZE expr filename material RCURL
+
+    STRING           shift, and go to state 72
+    KDTREE_LEAFSIZE  shift, and go to state 73
+
+    filename  go to state 74
+
+
+state 41
+
+   90 kdtree: KDTREE LCURL . objects RCURL
+   91       | KDTREE LCURL . KDTREE_LEAFSIZE expr objects RCURL
+
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    KDTREE_LEAFSIZE     shift, and go to state 76
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 77
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    objects             go to state 78
+    transformed_object  go to state 28
+
+
+state 42
+
+   92 group: GROUP LCURL . objects RCURL
+
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 77
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    objects             go to state 79
+    transformed_object  go to state 28
+
+
+state 43
+
+   95 transformed_object: TRANSFORMED_OBJECT LCURL . object transforms RCURL
+
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 80
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    transformed_object  go to state 28
+
+
+state 44
+
+  104 pointlight: POINTLIGHT LCURL . vector_expr spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 81
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 45
+
+  105 trianglelight: TRIANGLELIGHT LCURL . vector_expr vector_expr vector_expr spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 82
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 46
+
+  106 variable_declaration: DOLLAR IDENTIFIER EQ . expr
+  107                     | DOLLAR IDENTIFIER EQ . float_expr
+  108                     | DOLLAR IDENTIFIER EQ . vector_expr
+  109                     | DOLLAR IDENTIFIER EQ . spectrum_expr
+  110                     | DOLLAR IDENTIFIER EQ . material
+  111                     | DOLLAR IDENTIFIER EQ . object
+  112                     | DOLLAR IDENTIFIER EQ . light
+  113                     | DOLLAR IDENTIFIER EQ . camera
+
+    LPAREN              shift, and go to state 83
+    LANG                shift, and go to state 54
+    LSQ                 shift, and go to state 84
+    XVECTOR             shift, and go to state 55
+    YVECTOR             shift, and go to state 56
+    ZVECTOR             shift, and go to state 57
+    NUMBER_INTEGER      shift, and go to state 58
+    NUMBER_FLOAT        shift, and go to state 59
+    IDENTIFIER          shift, and go to state 85
+    CAMERA              shift, and go to state 6
+    MATERIAL            shift, and go to state 86
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+    POINTLIGHT          shift, and go to state 15
+    TRIANGLELIGHT       shift, and go to state 16
+
+    expr                  go to state 87
+    term                  go to state 88
+    factor                go to state 89
+    number_integer        go to state 90
+    float_expr            go to state 91
+    float_term            go to state 92
+    float_factor          go to state 93
+    number_float          go to state 62
+    number                go to state 94
+    vector_expr           go to state 95
+    vector_term           go to state 65
+    vector_factor         go to state 66
+    vector                go to state 67
+    vector_declaration    go to state 68
+    spectrum_expr         go to state 96
+    spectrum_term         go to state 97
+    spectrum_factor       go to state 98
+    spectrum              go to state 99
+    camera                go to state 100
+    material              go to state 101
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+    object                go to state 107
+    sphere                go to state 21
+    plane                 go to state 22
+    box                   go to state 23
+    disc                  go to state 24
+    mesh                  go to state 25
+    kdtree                go to state 26
+    group                 go to state 27
+    transformed_object    go to state 28
+    light                 go to state 108
+    pointlight            go to state 30
+    trianglelight         go to state 31
+
+
+state 47
+
+   56 image: IMAGE LCURL IMAGE_WIDTH . expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 111
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 48
+
+   62 perspective_camera: PERSPECTIVE_CAMERA . LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    LCURL  shift, and go to state 113
+
+
+state 49
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA . LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL
+
+    LCURL  shift, and go to state 114
+
+
+state 50
+
+   57 camera: CAMERA LCURL camera_declaration . RCURL
+   58       | CAMERA LCURL camera_declaration . CAMERA_LOOKAT vector_expr RCURL
+
+    RCURL          shift, and go to state 115
+    CAMERA_LOOKAT  shift, and go to state 116
+
+
+state 51
+
+   60 camera_declaration: perspective_camera .
+
+    $default  reduce using rule 60 (camera_declaration)
+
+
+state 52
+
+   61 camera_declaration: orthographic_camera .
+
+    $default  reduce using rule 61 (camera_declaration)
+
+
+state 53
+
+   35 vector_factor: LPAREN . vector_expr RPAREN
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 117
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 54
+
+   39 vector_declaration: LANG . number COMMA number COMMA number RANG
+   40                   | LANG . number number number RANG
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 119
+
+
+state 55
+
+   41 vector_declaration: XVECTOR .
+
+    $default  reduce using rule 41 (vector_declaration)
+
+
+state 56
+
+   42 vector_declaration: YVECTOR .
+
+    $default  reduce using rule 42 (vector_declaration)
+
+
+state 57
+
+   43 vector_declaration: ZVECTOR .
+
+    $default  reduce using rule 43 (vector_declaration)
+
+
+state 58
+
+   16 number_integer: NUMBER_INTEGER .
+
+    $default  reduce using rule 16 (number_integer)
+
+
+state 59
+
+   26 number_float: NUMBER_FLOAT .
+
+    $default  reduce using rule 26 (number_float)
+
+
+state 60
+
+   17 number_integer: IDENTIFIER .
+   27 number_float: IDENTIFIER .
+   38 vector: IDENTIFIER .
+
+    $end                reduce using rule 17 (number_integer)
+    $end                [reduce using rule 27 (number_float)]
+    $end                [reduce using rule 38 (vector)]
+    PLUS                reduce using rule 17 (number_integer)
+    PLUS                [reduce using rule 27 (number_float)]
+    PLUS                [reduce using rule 38 (vector)]
+    MINUS               reduce using rule 17 (number_integer)
+    MINUS               [reduce using rule 27 (number_float)]
+    MINUS               [reduce using rule 38 (vector)]
+    ASTERISK            reduce using rule 17 (number_integer)
+    ASTERISK            [reduce using rule 27 (number_float)]
+    ASTERISK            [reduce using rule 38 (vector)]
+    LPAREN              reduce using rule 17 (number_integer)
+    LPAREN              [reduce using rule 27 (number_float)]
+    LPAREN              [reduce using rule 38 (vector)]
+    RPAREN              reduce using rule 17 (number_integer)
+    RPAREN              [reduce using rule 27 (number_float)]
+    RPAREN              [reduce using rule 38 (vector)]
+    LANG                reduce using rule 17 (number_integer)
+    LANG                [reduce using rule 27 (number_float)]
+    LANG                [reduce using rule 38 (vector)]
+    RCURL               reduce using rule 17 (number_integer)
+    RCURL               [reduce using rule 27 (number_float)]
+    RCURL               [reduce using rule 38 (vector)]
+    LSQ                 reduce using rule 17 (number_integer)
+    LSQ                 [reduce using rule 27 (number_float)]
+    LSQ                 [reduce using rule 38 (vector)]
+    DOLLAR              reduce using rule 17 (number_integer)
+    DOLLAR              [reduce using rule 27 (number_float)]
+    DOLLAR              [reduce using rule 38 (vector)]
+    XVECTOR             reduce using rule 17 (number_integer)
+    XVECTOR             [reduce using rule 27 (number_float)]
+    XVECTOR             [reduce using rule 38 (vector)]
+    YVECTOR             reduce using rule 17 (number_integer)
+    YVECTOR             [reduce using rule 27 (number_float)]
+    YVECTOR             [reduce using rule 38 (vector)]
+    ZVECTOR             reduce using rule 17 (number_integer)
+    ZVECTOR             [reduce using rule 27 (number_float)]
+    ZVECTOR             [reduce using rule 38 (vector)]
+    NUMBER_INTEGER      reduce using rule 17 (number_integer)
+    NUMBER_INTEGER      [reduce using rule 27 (number_float)]
+    NUMBER_INTEGER      [reduce using rule 38 (vector)]
+    NUMBER_FLOAT        reduce using rule 17 (number_integer)
+    NUMBER_FLOAT        [reduce using rule 27 (number_float)]
+    NUMBER_FLOAT        [reduce using rule 38 (vector)]
+    IDENTIFIER          reduce using rule 17 (number_integer)
+    IDENTIFIER          [reduce using rule 27 (number_float)]
+    IDENTIFIER          [reduce using rule 38 (vector)]
+    IMAGE               reduce using rule 17 (number_integer)
+    IMAGE               [reduce using rule 27 (number_float)]
+    IMAGE               [reduce using rule 38 (vector)]
+    CAMERA              reduce using rule 17 (number_integer)
+    CAMERA              [reduce using rule 27 (number_float)]
+    CAMERA              [reduce using rule 38 (vector)]
+    CAMERA_UP           reduce using rule 17 (number_integer)
+    CAMERA_UP           [reduce using rule 27 (number_float)]
+    CAMERA_UP           [reduce using rule 38 (vector)]
+    CAMERA_RIGHT        reduce using rule 17 (number_integer)
+    CAMERA_RIGHT        [reduce using rule 27 (number_float)]
+    CAMERA_RIGHT        [reduce using rule 38 (vector)]
+    CAMERA_ANGLE        reduce using rule 17 (number_integer)
+    CAMERA_ANGLE        [reduce using rule 27 (number_float)]
+    CAMERA_ANGLE        [reduce using rule 38 (vector)]
+    MATERIAL            reduce using rule 17 (number_integer)
+    MATERIAL            [reduce using rule 27 (number_float)]
+    MATERIAL            [reduce using rule 38 (vector)]
+    SPHERE              reduce using rule 17 (number_integer)
+    SPHERE              [reduce using rule 27 (number_float)]
+    SPHERE              [reduce using rule 38 (vector)]
+    PLANE               reduce using rule 17 (number_integer)
+    PLANE               [reduce using rule 27 (number_float)]
+    PLANE               [reduce using rule 38 (vector)]
+    BOX                 reduce using rule 17 (number_integer)
+    BOX                 [reduce using rule 27 (number_float)]
+    BOX                 [reduce using rule 38 (vector)]
+    DISC                reduce using rule 17 (number_integer)
+    DISC                [reduce using rule 27 (number_float)]
+    DISC                [reduce using rule 38 (vector)]
+    MESH                reduce using rule 17 (number_integer)
+    MESH                [reduce using rule 27 (number_float)]
+    MESH                [reduce using rule 38 (vector)]
+    KDTREE              reduce using rule 17 (number_integer)
+    KDTREE              [reduce using rule 27 (number_float)]
+    KDTREE              [reduce using rule 38 (vector)]
+    GROUP               reduce using rule 17 (number_integer)
+    GROUP               [reduce using rule 27 (number_float)]
+    GROUP               [reduce using rule 38 (vector)]
+    TRANSFORMED_OBJECT  reduce using rule 17 (number_integer)
+    TRANSFORMED_OBJECT  [reduce using rule 27 (number_float)]
+    TRANSFORMED_OBJECT  [reduce using rule 38 (vector)]
+    TRANSLATE           reduce using rule 17 (number_integer)
+    TRANSLATE           [reduce using rule 27 (number_float)]
+    TRANSLATE           [reduce using rule 38 (vector)]
+    ROTATE              reduce using rule 17 (number_integer)
+    ROTATE              [reduce using rule 27 (number_float)]
+    ROTATE              [reduce using rule 38 (vector)]
+    SCALE               reduce using rule 17 (number_integer)
+    SCALE               [reduce using rule 27 (number_float)]
+    SCALE               [reduce using rule 38 (vector)]
+    POINTLIGHT          reduce using rule 17 (number_integer)
+    POINTLIGHT          [reduce using rule 27 (number_float)]
+    POINTLIGHT          [reduce using rule 38 (vector)]
+    TRIANGLELIGHT       reduce using rule 17 (number_integer)
+    TRIANGLELIGHT       [reduce using rule 27 (number_float)]
+    TRIANGLELIGHT       [reduce using rule 38 (vector)]
+    $default            reduce using rule 17 (number_integer)
+
+
+state 61
+
+   29 number: number_integer .
+
+    $default  reduce using rule 29 (number)
+
+
+state 62
+
+   28 number: number_float .
+
+    $default  reduce using rule 28 (number)
+
+
+state 63
+
+   44 vector_declaration: number .
+
+    $default  reduce using rule 44 (vector_declaration)
+
+
+state 64
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   83 sphere: SPHERE LCURL vector_expr . float_expr material RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 123
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 65
+
+   32 vector_expr: vector_term .
+   33 vector_term: vector_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 125
+
+    $default  reduce using rule 32 (vector_expr)
+
+
+state 66
+
+   34 vector_term: vector_factor .
+
+    $default  reduce using rule 34 (vector_term)
+
+
+state 67
+
+   36 vector_factor: vector .
+
+    $default  reduce using rule 36 (vector_factor)
+
+
+state 68
+
+   37 vector: vector_declaration .
+
+    $default  reduce using rule 37 (vector)
+
+
+state 69
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   84 plane: PLANE LCURL vector_expr . float_expr material RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 126
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 70
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   85 box: BOX LCURL vector_expr . vector_expr material RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 127
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 71
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   86 disc: DISC LCURL vector_expr . vector_expr float_expr material RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 128
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 72
+
+   89 filename: STRING .
+
+    $default  reduce using rule 89 (filename)
+
+
+state 73
+
+   88 mesh: MESH LCURL KDTREE_LEAFSIZE . expr filename material RCURL
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 129
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 74
+
+   87 mesh: MESH LCURL filename . material RCURL
+
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 131
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 75
+
+   82 object: IDENTIFIER .
+
+    $default  reduce using rule 82 (object)
+
+
+state 76
+
+   91 kdtree: KDTREE LCURL KDTREE_LEAFSIZE . expr objects RCURL
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 132
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 77
+
+   94 objects: object .
+
+    $default  reduce using rule 94 (objects)
+
+
+state 78
+
+   90 kdtree: KDTREE LCURL objects . RCURL
+   93 objects: objects . object
+
+    RCURL               shift, and go to state 133
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 134
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    transformed_object  go to state 28
+
+
+state 79
+
+   92 group: GROUP LCURL objects . RCURL
+   93 objects: objects . object
+
+    RCURL               shift, and go to state 135
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 134
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    transformed_object  go to state 28
+
+
+state 80
+
+   95 transformed_object: TRANSFORMED_OBJECT LCURL object . transforms RCURL
+
+    TRANSLATE  shift, and go to state 136
+    ROTATE     shift, and go to state 137
+    SCALE      shift, and go to state 138
+
+    transforms  go to state 139
+    transform   go to state 140
+
+
+state 81
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  104 pointlight: POINTLIGHT LCURL vector_expr . spectrum_expr RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 144
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 82
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr . vector_expr vector_expr spectrum_expr RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 145
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 83
+
+   14 factor: LPAREN . expr RPAREN
+   24 float_factor: LPAREN . float_expr RPAREN
+   35 vector_factor: LPAREN . vector_expr RPAREN
+   50 spectrum_factor: LPAREN . spectrum_expr RPAREN
+
+    LPAREN          shift, and go to state 83
+    LANG            shift, and go to state 54
+    LSQ             shift, and go to state 84
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 146
+
+    expr                go to state 147
+    term                go to state 88
+    factor              go to state 89
+    number_integer      go to state 90
+    float_expr          go to state 148
+    float_term          go to state 92
+    float_factor        go to state 93
+    number_float        go to state 62
+    number              go to state 94
+    vector_expr         go to state 117
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+    spectrum_expr       go to state 149
+    spectrum_term       go to state 97
+    spectrum_factor     go to state 98
+    spectrum            go to state 99
+
+
+state 84
+
+   52 spectrum: LSQ . number COMMA number COMMA number RSQ
+   53         | LSQ . number number number RSQ
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 150
+
+
+state 85
+
+   17 number_integer: IDENTIFIER .
+   27 number_float: IDENTIFIER .
+   38 vector: IDENTIFIER .
+   55 spectrum: IDENTIFIER .
+   59 camera: IDENTIFIER .
+   65 material: IDENTIFIER .
+   82 object: IDENTIFIER .
+  103 light: IDENTIFIER .
+
+    $end                reduce using rule 17 (number_integer)
+    $end                [reduce using rule 27 (number_float)]
+    $end                [reduce using rule 38 (vector)]
+    $end                [reduce using rule 55 (spectrum)]
+    $end                [reduce using rule 59 (camera)]
+    $end                [reduce using rule 65 (material)]
+    $end                [reduce using rule 82 (object)]
+    $end                [reduce using rule 103 (light)]
+    PLUS                reduce using rule 17 (number_integer)
+    PLUS                [reduce using rule 27 (number_float)]
+    PLUS                [reduce using rule 38 (vector)]
+    PLUS                [reduce using rule 55 (spectrum)]
+    MINUS               reduce using rule 17 (number_integer)
+    MINUS               [reduce using rule 27 (number_float)]
+    MINUS               [reduce using rule 38 (vector)]
+    MINUS               [reduce using rule 55 (spectrum)]
+    ASTERISK            reduce using rule 17 (number_integer)
+    ASTERISK            [reduce using rule 27 (number_float)]
+    ASTERISK            [reduce using rule 38 (vector)]
+    ASTERISK            [reduce using rule 55 (spectrum)]
+    SLASH               reduce using rule 17 (number_integer)
+    SLASH               [reduce using rule 27 (number_float)]
+    DOLLAR              reduce using rule 17 (number_integer)
+    DOLLAR              [reduce using rule 27 (number_float)]
+    DOLLAR              [reduce using rule 38 (vector)]
+    DOLLAR              [reduce using rule 55 (spectrum)]
+    DOLLAR              [reduce using rule 59 (camera)]
+    DOLLAR              [reduce using rule 65 (material)]
+    DOLLAR              [reduce using rule 82 (object)]
+    DOLLAR              [reduce using rule 103 (light)]
+    IDENTIFIER          reduce using rule 17 (number_integer)
+    IDENTIFIER          [reduce using rule 27 (number_float)]
+    IDENTIFIER          [reduce using rule 38 (vector)]
+    IDENTIFIER          [reduce using rule 55 (spectrum)]
+    IDENTIFIER          [reduce using rule 59 (camera)]
+    IDENTIFIER          [reduce using rule 65 (material)]
+    IDENTIFIER          [reduce using rule 82 (object)]
+    IDENTIFIER          [reduce using rule 103 (light)]
+    IMAGE               reduce using rule 17 (number_integer)
+    IMAGE               [reduce using rule 27 (number_float)]
+    IMAGE               [reduce using rule 38 (vector)]
+    IMAGE               [reduce using rule 55 (spectrum)]
+    IMAGE               [reduce using rule 59 (camera)]
+    IMAGE               [reduce using rule 65 (material)]
+    IMAGE               [reduce using rule 82 (object)]
+    IMAGE               [reduce using rule 103 (light)]
+    CAMERA              reduce using rule 17 (number_integer)
+    CAMERA              [reduce using rule 27 (number_float)]
+    CAMERA              [reduce using rule 38 (vector)]
+    CAMERA              [reduce using rule 55 (spectrum)]
+    CAMERA              [reduce using rule 59 (camera)]
+    CAMERA              [reduce using rule 65 (material)]
+    CAMERA              [reduce using rule 82 (object)]
+    CAMERA              [reduce using rule 103 (light)]
+    SPHERE              reduce using rule 17 (number_integer)
+    SPHERE              [reduce using rule 27 (number_float)]
+    SPHERE              [reduce using rule 38 (vector)]
+    SPHERE              [reduce using rule 55 (spectrum)]
+    SPHERE              [reduce using rule 59 (camera)]
+    SPHERE              [reduce using rule 65 (material)]
+    SPHERE              [reduce using rule 82 (object)]
+    SPHERE              [reduce using rule 103 (light)]
+    PLANE               reduce using rule 17 (number_integer)
+    PLANE               [reduce using rule 27 (number_float)]
+    PLANE               [reduce using rule 38 (vector)]
+    PLANE               [reduce using rule 55 (spectrum)]
+    PLANE               [reduce using rule 59 (camera)]
+    PLANE               [reduce using rule 65 (material)]
+    PLANE               [reduce using rule 82 (object)]
+    PLANE               [reduce using rule 103 (light)]
+    BOX                 reduce using rule 17 (number_integer)
+    BOX                 [reduce using rule 27 (number_float)]
+    BOX                 [reduce using rule 38 (vector)]
+    BOX                 [reduce using rule 55 (spectrum)]
+    BOX                 [reduce using rule 59 (camera)]
+    BOX                 [reduce using rule 65 (material)]
+    BOX                 [reduce using rule 82 (object)]
+    BOX                 [reduce using rule 103 (light)]
+    DISC                reduce using rule 17 (number_integer)
+    DISC                [reduce using rule 27 (number_float)]
+    DISC                [reduce using rule 38 (vector)]
+    DISC                [reduce using rule 55 (spectrum)]
+    DISC                [reduce using rule 59 (camera)]
+    DISC                [reduce using rule 65 (material)]
+    DISC                [reduce using rule 82 (object)]
+    DISC                [reduce using rule 103 (light)]
+    MESH                reduce using rule 17 (number_integer)
+    MESH                [reduce using rule 27 (number_float)]
+    MESH                [reduce using rule 38 (vector)]
+    MESH                [reduce using rule 55 (spectrum)]
+    MESH                [reduce using rule 59 (camera)]
+    MESH                [reduce using rule 65 (material)]
+    MESH                [reduce using rule 82 (object)]
+    MESH                [reduce using rule 103 (light)]
+    KDTREE              reduce using rule 17 (number_integer)
+    KDTREE              [reduce using rule 27 (number_float)]
+    KDTREE              [reduce using rule 38 (vector)]
+    KDTREE              [reduce using rule 55 (spectrum)]
+    KDTREE              [reduce using rule 59 (camera)]
+    KDTREE              [reduce using rule 65 (material)]
+    KDTREE              [reduce using rule 82 (object)]
+    KDTREE              [reduce using rule 103 (light)]
+    GROUP               reduce using rule 17 (number_integer)
+    GROUP               [reduce using rule 27 (number_float)]
+    GROUP               [reduce using rule 38 (vector)]
+    GROUP               [reduce using rule 55 (spectrum)]
+    GROUP               [reduce using rule 59 (camera)]
+    GROUP               [reduce using rule 65 (material)]
+    GROUP               [reduce using rule 82 (object)]
+    GROUP               [reduce using rule 103 (light)]
+    TRANSFORMED_OBJECT  reduce using rule 17 (number_integer)
+    TRANSFORMED_OBJECT  [reduce using rule 27 (number_float)]
+    TRANSFORMED_OBJECT  [reduce using rule 38 (vector)]
+    TRANSFORMED_OBJECT  [reduce using rule 55 (spectrum)]
+    TRANSFORMED_OBJECT  [reduce using rule 59 (camera)]
+    TRANSFORMED_OBJECT  [reduce using rule 65 (material)]
+    TRANSFORMED_OBJECT  [reduce using rule 82 (object)]
+    TRANSFORMED_OBJECT  [reduce using rule 103 (light)]
+    POINTLIGHT          reduce using rule 17 (number_integer)
+    POINTLIGHT          [reduce using rule 27 (number_float)]
+    POINTLIGHT          [reduce using rule 38 (vector)]
+    POINTLIGHT          [reduce using rule 55 (spectrum)]
+    POINTLIGHT          [reduce using rule 59 (camera)]
+    POINTLIGHT          [reduce using rule 65 (material)]
+    POINTLIGHT          [reduce using rule 82 (object)]
+    POINTLIGHT          [reduce using rule 103 (light)]
+    TRIANGLELIGHT       reduce using rule 17 (number_integer)
+    TRIANGLELIGHT       [reduce using rule 27 (number_float)]
+    TRIANGLELIGHT       [reduce using rule 38 (vector)]
+    TRIANGLELIGHT       [reduce using rule 55 (spectrum)]
+    TRIANGLELIGHT       [reduce using rule 59 (camera)]
+    TRIANGLELIGHT       [reduce using rule 65 (material)]
+    TRIANGLELIGHT       [reduce using rule 82 (object)]
+    TRIANGLELIGHT       [reduce using rule 103 (light)]
+    $default            reduce using rule 17 (number_integer)
+
+
+state 86
+
+   70 diffuse_material: MATERIAL . LCURL MATERIAL_KD spectrum_expr RCURL
+   71 ambient_material: MATERIAL . LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr RCURL
+   72 reflective_material: MATERIAL . LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL . LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    LCURL  shift, and go to state 151
+
+
+state 87
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+  106 variable_declaration: DOLLAR IDENTIFIER EQ expr .
+
+    PLUS   shift, and go to state 152
+    MINUS  shift, and go to state 153
+
+    $default  reduce using rule 106 (variable_declaration)
+
+
+state 88
+
+   10 expr: term .
+   11 term: term . ASTERISK number_integer
+   12     | term . SLASH number_integer
+
+    ASTERISK  shift, and go to state 154
+    SLASH     shift, and go to state 155
+
+    $default  reduce using rule 10 (expr)
+
+
+state 89
+
+   13 term: factor .
+
+    $default  reduce using rule 13 (term)
+
+
+state 90
+
+   15 factor: number_integer .
+   29 number: number_integer .
+
+    $end                reduce using rule 15 (factor)
+    $end                [reduce using rule 29 (number)]
+    PLUS                reduce using rule 15 (factor)
+    PLUS                [reduce using rule 29 (number)]
+    MINUS               reduce using rule 15 (factor)
+    MINUS               [reduce using rule 29 (number)]
+    ASTERISK            reduce using rule 15 (factor)
+    ASTERISK            [reduce using rule 29 (number)]
+    SLASH               reduce using rule 15 (factor)
+    SLASH               [reduce using rule 29 (number)]
+    RPAREN              reduce using rule 15 (factor)
+    RPAREN              [reduce using rule 29 (number)]
+    DOLLAR              reduce using rule 15 (factor)
+    DOLLAR              [reduce using rule 29 (number)]
+    IDENTIFIER          reduce using rule 15 (factor)
+    IDENTIFIER          [reduce using rule 29 (number)]
+    IMAGE               reduce using rule 15 (factor)
+    IMAGE               [reduce using rule 29 (number)]
+    CAMERA              reduce using rule 15 (factor)
+    CAMERA              [reduce using rule 29 (number)]
+    SPHERE              reduce using rule 15 (factor)
+    SPHERE              [reduce using rule 29 (number)]
+    PLANE               reduce using rule 15 (factor)
+    PLANE               [reduce using rule 29 (number)]
+    BOX                 reduce using rule 15 (factor)
+    BOX                 [reduce using rule 29 (number)]
+    DISC                reduce using rule 15 (factor)
+    DISC                [reduce using rule 29 (number)]
+    MESH                reduce using rule 15 (factor)
+    MESH                [reduce using rule 29 (number)]
+    KDTREE              reduce using rule 15 (factor)
+    KDTREE              [reduce using rule 29 (number)]
+    GROUP               reduce using rule 15 (factor)
+    GROUP               [reduce using rule 29 (number)]
+    TRANSFORMED_OBJECT  reduce using rule 15 (factor)
+    TRANSFORMED_OBJECT  [reduce using rule 29 (number)]
+    POINTLIGHT          reduce using rule 15 (factor)
+    POINTLIGHT          [reduce using rule 29 (number)]
+    TRIANGLELIGHT       reduce using rule 15 (factor)
+    TRIANGLELIGHT       [reduce using rule 29 (number)]
+    $default            reduce using rule 15 (factor)
+
+
+state 91
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+  107 variable_declaration: DOLLAR IDENTIFIER EQ float_expr .
+
+    PLUS   shift, and go to state 156
+    MINUS  shift, and go to state 157
+
+    $default  reduce using rule 107 (variable_declaration)
+
+
+state 92
+
+   20 float_expr: float_term .
+   21 float_term: float_term . ASTERISK number
+   22           | float_term . SLASH number
+
+    ASTERISK  shift, and go to state 158
+    SLASH     shift, and go to state 159
+
+    $default  reduce using rule 20 (float_expr)
+
+
+state 93
+
+   23 float_term: float_factor .
+
+    $default  reduce using rule 23 (float_term)
+
+
+state 94
+
+   25 float_factor: number .
+   44 vector_declaration: number .
+   54 spectrum: number .
+
+    $end                reduce using rule 25 (float_factor)
+    $end                [reduce using rule 44 (vector_declaration)]
+    $end                [reduce using rule 54 (spectrum)]
+    PLUS                reduce using rule 25 (float_factor)
+    PLUS                [reduce using rule 44 (vector_declaration)]
+    PLUS                [reduce using rule 54 (spectrum)]
+    MINUS               reduce using rule 25 (float_factor)
+    MINUS               [reduce using rule 44 (vector_declaration)]
+    MINUS               [reduce using rule 54 (spectrum)]
+    ASTERISK            reduce using rule 25 (float_factor)
+    ASTERISK            [reduce using rule 44 (vector_declaration)]
+    ASTERISK            [reduce using rule 54 (spectrum)]
+    RPAREN              reduce using rule 25 (float_factor)
+    RPAREN              [reduce using rule 44 (vector_declaration)]
+    RPAREN              [reduce using rule 54 (spectrum)]
+    DOLLAR              reduce using rule 25 (float_factor)
+    DOLLAR              [reduce using rule 44 (vector_declaration)]
+    DOLLAR              [reduce using rule 54 (spectrum)]
+    IDENTIFIER          reduce using rule 25 (float_factor)
+    IDENTIFIER          [reduce using rule 44 (vector_declaration)]
+    IDENTIFIER          [reduce using rule 54 (spectrum)]
+    IMAGE               reduce using rule 25 (float_factor)
+    IMAGE               [reduce using rule 44 (vector_declaration)]
+    IMAGE               [reduce using rule 54 (spectrum)]
+    CAMERA              reduce using rule 25 (float_factor)
+    CAMERA              [reduce using rule 44 (vector_declaration)]
+    CAMERA              [reduce using rule 54 (spectrum)]
+    SPHERE              reduce using rule 25 (float_factor)
+    SPHERE              [reduce using rule 44 (vector_declaration)]
+    SPHERE              [reduce using rule 54 (spectrum)]
+    PLANE               reduce using rule 25 (float_factor)
+    PLANE               [reduce using rule 44 (vector_declaration)]
+    PLANE               [reduce using rule 54 (spectrum)]
+    BOX                 reduce using rule 25 (float_factor)
+    BOX                 [reduce using rule 44 (vector_declaration)]
+    BOX                 [reduce using rule 54 (spectrum)]
+    DISC                reduce using rule 25 (float_factor)
+    DISC                [reduce using rule 44 (vector_declaration)]
+    DISC                [reduce using rule 54 (spectrum)]
+    MESH                reduce using rule 25 (float_factor)
+    MESH                [reduce using rule 44 (vector_declaration)]
+    MESH                [reduce using rule 54 (spectrum)]
+    KDTREE              reduce using rule 25 (float_factor)
+    KDTREE              [reduce using rule 44 (vector_declaration)]
+    KDTREE              [reduce using rule 54 (spectrum)]
+    GROUP               reduce using rule 25 (float_factor)
+    GROUP               [reduce using rule 44 (vector_declaration)]
+    GROUP               [reduce using rule 54 (spectrum)]
+    TRANSFORMED_OBJECT  reduce using rule 25 (float_factor)
+    TRANSFORMED_OBJECT  [reduce using rule 44 (vector_declaration)]
+    TRANSFORMED_OBJECT  [reduce using rule 54 (spectrum)]
+    POINTLIGHT          reduce using rule 25 (float_factor)
+    POINTLIGHT          [reduce using rule 44 (vector_declaration)]
+    POINTLIGHT          [reduce using rule 54 (spectrum)]
+    TRIANGLELIGHT       reduce using rule 25 (float_factor)
+    TRIANGLELIGHT       [reduce using rule 44 (vector_declaration)]
+    TRIANGLELIGHT       [reduce using rule 54 (spectrum)]
+    $default            reduce using rule 25 (float_factor)
+
+
+state 95
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  108 variable_declaration: DOLLAR IDENTIFIER EQ vector_expr .
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+
+    $default  reduce using rule 108 (variable_declaration)
+
+
+state 96
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+  109 variable_declaration: DOLLAR IDENTIFIER EQ spectrum_expr .
+
+    PLUS   shift, and go to state 160
+    MINUS  shift, and go to state 161
+
+    $default  reduce using rule 109 (variable_declaration)
+
+
+state 97
+
+   47 spectrum_expr: spectrum_term .
+   48 spectrum_term: spectrum_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 162
+
+    $default  reduce using rule 47 (spectrum_expr)
+
+
+state 98
+
+   49 spectrum_term: spectrum_factor .
+
+    $default  reduce using rule 49 (spectrum_term)
+
+
+state 99
+
+   51 spectrum_factor: spectrum .
+
+    $default  reduce using rule 51 (spectrum_factor)
+
+
+state 100
+
+  113 variable_declaration: DOLLAR IDENTIFIER EQ camera .
+
+    $default  reduce using rule 113 (variable_declaration)
+
+
+state 101
+
+  110 variable_declaration: DOLLAR IDENTIFIER EQ material .
+
+    $default  reduce using rule 110 (variable_declaration)
+
+
+state 102
+
+   64 material: material_declaration .
+
+    $default  reduce using rule 64 (material)
+
+
+state 103
+
+   66 material_declaration: diffuse_material .
+
+    $default  reduce using rule 66 (material_declaration)
+
+
+state 104
+
+   67 material_declaration: ambient_material .
+
+    $default  reduce using rule 67 (material_declaration)
+
+
+state 105
+
+   68 material_declaration: reflective_material .
+
+    $default  reduce using rule 68 (material_declaration)
+
+
+state 106
+
+   69 material_declaration: transparent_material .
+
+    $default  reduce using rule 69 (material_declaration)
+
+
+state 107
+
+  111 variable_declaration: DOLLAR IDENTIFIER EQ object .
+
+    $default  reduce using rule 111 (variable_declaration)
+
+
+state 108
+
+  112 variable_declaration: DOLLAR IDENTIFIER EQ light .
+
+    $default  reduce using rule 112 (variable_declaration)
+
+
+state 109
+
+   14 factor: LPAREN . expr RPAREN
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 147
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 110
+
+   17 number_integer: IDENTIFIER .
+
+    $default  reduce using rule 17 (number_integer)
+
+
+state 111
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   56 image: IMAGE LCURL IMAGE_WIDTH expr . IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    PLUS          shift, and go to state 152
+    MINUS         shift, and go to state 153
+    IMAGE_HEIGHT  shift, and go to state 163
+
+
+state 112
+
+   15 factor: number_integer .
+
+    $default  reduce using rule 15 (factor)
+
+
+state 113
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL . CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    CAMERA_ORIGIN  shift, and go to state 164
+
+
+state 114
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL . CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL
+
+    CAMERA_ORIGIN  shift, and go to state 165
+
+
+state 115
+
+   57 camera: CAMERA LCURL camera_declaration RCURL .
+
+    $default  reduce using rule 57 (camera)
+
+
+state 116
+
+   58 camera: CAMERA LCURL camera_declaration CAMERA_LOOKAT . vector_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 166
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 117
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   35 vector_factor: LPAREN vector_expr . RPAREN
+
+    PLUS    shift, and go to state 120
+    MINUS   shift, and go to state 121
+    RPAREN  shift, and go to state 167
+
+
+state 118
+
+   17 number_integer: IDENTIFIER .
+   27 number_float: IDENTIFIER .
+
+    $end                        reduce using rule 17 (number_integer)
+    $end                        [reduce using rule 27 (number_float)]
+    PLUS                        reduce using rule 17 (number_integer)
+    PLUS                        [reduce using rule 27 (number_float)]
+    MINUS                       reduce using rule 17 (number_integer)
+    MINUS                       [reduce using rule 27 (number_float)]
+    ASTERISK                    reduce using rule 17 (number_integer)
+    ASTERISK                    [reduce using rule 27 (number_float)]
+    SLASH                       reduce using rule 17 (number_integer)
+    SLASH                       [reduce using rule 27 (number_float)]
+    LPAREN                      reduce using rule 17 (number_integer)
+    LPAREN                      [reduce using rule 27 (number_float)]
+    RPAREN                      reduce using rule 17 (number_integer)
+    RPAREN                      [reduce using rule 27 (number_float)]
+    LANG                        reduce using rule 17 (number_integer)
+    LANG                        [reduce using rule 27 (number_float)]
+    RANG                        reduce using rule 17 (number_integer)
+    RANG                        [reduce using rule 27 (number_float)]
+    RCURL                       reduce using rule 17 (number_integer)
+    RCURL                       [reduce using rule 27 (number_float)]
+    LSQ                         reduce using rule 17 (number_integer)
+    LSQ                         [reduce using rule 27 (number_float)]
+    RSQ                         reduce using rule 17 (number_integer)
+    RSQ                         [reduce using rule 27 (number_float)]
+    COMMA                       reduce using rule 17 (number_integer)
+    COMMA                       [reduce using rule 27 (number_float)]
+    DOLLAR                      reduce using rule 17 (number_integer)
+    DOLLAR                      [reduce using rule 27 (number_float)]
+    XVECTOR                     reduce using rule 17 (number_integer)
+    XVECTOR                     [reduce using rule 27 (number_float)]
+    YVECTOR                     reduce using rule 17 (number_integer)
+    YVECTOR                     [reduce using rule 27 (number_float)]
+    ZVECTOR                     reduce using rule 17 (number_integer)
+    ZVECTOR                     [reduce using rule 27 (number_float)]
+    NUMBER_INTEGER              reduce using rule 17 (number_integer)
+    NUMBER_INTEGER              [reduce using rule 27 (number_float)]
+    NUMBER_FLOAT                reduce using rule 17 (number_integer)
+    NUMBER_FLOAT                [reduce using rule 27 (number_float)]
+    IDENTIFIER                  reduce using rule 17 (number_integer)
+    IDENTIFIER                  [reduce using rule 27 (number_float)]
+    IMAGE                       reduce using rule 17 (number_integer)
+    IMAGE                       [reduce using rule 27 (number_float)]
+    CAMERA                      reduce using rule 17 (number_integer)
+    CAMERA                      [reduce using rule 27 (number_float)]
+    CAMERA_UP                   reduce using rule 17 (number_integer)
+    CAMERA_UP                   [reduce using rule 27 (number_float)]
+    CAMERA_RIGHT                reduce using rule 17 (number_integer)
+    CAMERA_RIGHT                [reduce using rule 27 (number_float)]
+    CAMERA_ANGLE                reduce using rule 17 (number_integer)
+    CAMERA_ANGLE                [reduce using rule 27 (number_float)]
+    MATERIAL                    reduce using rule 17 (number_integer)
+    MATERIAL                    [reduce using rule 27 (number_float)]
+    MATERIAL_KA                 reduce using rule 17 (number_integer)
+    MATERIAL_KA                 [reduce using rule 27 (number_float)]
+    MATERIAL_REFLECTED_COLOR    reduce using rule 17 (number_integer)
+    MATERIAL_REFLECTED_COLOR    [reduce using rule 27 (number_float)]
+    MATERIAL_TRANSMITTED_COLOR  reduce using rule 17 (number_integer)
+    MATERIAL_TRANSMITTED_COLOR  [reduce using rule 27 (number_float)]
+    MATERIAL_IOR                reduce using rule 17 (number_integer)
+    MATERIAL_IOR                [reduce using rule 27 (number_float)]
+    SPHERE                      reduce using rule 17 (number_integer)
+    SPHERE                      [reduce using rule 27 (number_float)]
+    PLANE                       reduce using rule 17 (number_integer)
+    PLANE                       [reduce using rule 27 (number_float)]
+    BOX                         reduce using rule 17 (number_integer)
+    BOX                         [reduce using rule 27 (number_float)]
+    DISC                        reduce using rule 17 (number_integer)
+    DISC                        [reduce using rule 27 (number_float)]
+    MESH                        reduce using rule 17 (number_integer)
+    MESH                        [reduce using rule 27 (number_float)]
+    KDTREE                      reduce using rule 17 (number_integer)
+    KDTREE                      [reduce using rule 27 (number_float)]
+    GROUP                       reduce using rule 17 (number_integer)
+    GROUP                       [reduce using rule 27 (number_float)]
+    TRANSFORMED_OBJECT          reduce using rule 17 (number_integer)
+    TRANSFORMED_OBJECT          [reduce using rule 27 (number_float)]
+    TRANSLATE                   reduce using rule 17 (number_integer)
+    TRANSLATE                   [reduce using rule 27 (number_float)]
+    ROTATE                      reduce using rule 17 (number_integer)
+    ROTATE                      [reduce using rule 27 (number_float)]
+    SCALE                       reduce using rule 17 (number_integer)
+    SCALE                       [reduce using rule 27 (number_float)]
+    POINTLIGHT                  reduce using rule 17 (number_integer)
+    POINTLIGHT                  [reduce using rule 27 (number_float)]
+    TRIANGLELIGHT               reduce using rule 17 (number_integer)
+    TRIANGLELIGHT               [reduce using rule 27 (number_float)]
+    $default                    reduce using rule 17 (number_integer)
+
+
+state 119
+
+   39 vector_declaration: LANG number . COMMA number COMMA number RANG
+   40                   | LANG number . number number RANG
+
+    COMMA           shift, and go to state 168
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 169
+
+
+state 120
+
+   30 vector_expr: vector_expr PLUS . vector_term
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_term         go to state 170
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 121
+
+   31 vector_expr: vector_expr MINUS . vector_term
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_term         go to state 171
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 122
+
+   24 float_factor: LPAREN . float_expr RPAREN
+
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 148
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 123
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   83 sphere: SPHERE LCURL vector_expr float_expr . material RCURL
+
+    PLUS        shift, and go to state 156
+    MINUS       shift, and go to state 157
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 172
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 124
+
+   25 float_factor: number .
+
+    $default  reduce using rule 25 (float_factor)
+
+
+state 125
+
+   33 vector_term: vector_term ASTERISK . number
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 173
+
+
+state 126
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   84 plane: PLANE LCURL vector_expr float_expr . material RCURL
+
+    PLUS        shift, and go to state 156
+    MINUS       shift, and go to state 157
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 174
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 127
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   85 box: BOX LCURL vector_expr vector_expr . material RCURL
+
+    PLUS        shift, and go to state 120
+    MINUS       shift, and go to state 121
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 175
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 128
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   86 disc: DISC LCURL vector_expr vector_expr . float_expr material RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 176
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 129
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   88 mesh: MESH LCURL KDTREE_LEAFSIZE expr . filename material RCURL
+
+    PLUS    shift, and go to state 152
+    MINUS   shift, and go to state 153
+    STRING  shift, and go to state 72
+
+    filename  go to state 177
+
+
+state 130
+
+   65 material: IDENTIFIER .
+
+    $default  reduce using rule 65 (material)
+
+
+state 131
+
+   87 mesh: MESH LCURL filename material . RCURL
+
+    RCURL  shift, and go to state 178
+
+
+state 132
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   91 kdtree: KDTREE LCURL KDTREE_LEAFSIZE expr . objects RCURL
+
+    PLUS                shift, and go to state 152
+    MINUS               shift, and go to state 153
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 77
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    objects             go to state 179
+    transformed_object  go to state 28
+
+
+state 133
+
+   90 kdtree: KDTREE LCURL objects RCURL .
+
+    $default  reduce using rule 90 (kdtree)
+
+
+state 134
+
+   93 objects: objects object .
+
+    $default  reduce using rule 93 (objects)
+
+
+state 135
+
+   92 group: GROUP LCURL objects RCURL .
+
+    $default  reduce using rule 92 (group)
+
+
+state 136
+
+   98 transform: TRANSLATE . vector_expr
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 180
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 137
+
+   99 transform: ROTATE . vector_expr
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 181
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 138
+
+  100 transform: SCALE . vector_expr
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 182
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 139
+
+   95 transformed_object: TRANSFORMED_OBJECT LCURL object transforms . RCURL
+   96 transforms: transforms . transform
+
+    RCURL      shift, and go to state 183
+    TRANSLATE  shift, and go to state 136
+    ROTATE     shift, and go to state 137
+    SCALE      shift, and go to state 138
+
+    transform  go to state 184
+
+
+state 140
+
+   97 transforms: transform .
+
+    $default  reduce using rule 97 (transforms)
+
+
+state 141
+
+   50 spectrum_factor: LPAREN . spectrum_expr RPAREN
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 149
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 142
+
+   17 number_integer: IDENTIFIER .
+   27 number_float: IDENTIFIER .
+   55 spectrum: IDENTIFIER .
+
+    $end                        reduce using rule 17 (number_integer)
+    $end                        [reduce using rule 27 (number_float)]
+    $end                        [reduce using rule 55 (spectrum)]
+    PLUS                        reduce using rule 17 (number_integer)
+    PLUS                        [reduce using rule 27 (number_float)]
+    PLUS                        [reduce using rule 55 (spectrum)]
+    MINUS                       reduce using rule 17 (number_integer)
+    MINUS                       [reduce using rule 27 (number_float)]
+    MINUS                       [reduce using rule 55 (spectrum)]
+    ASTERISK                    reduce using rule 17 (number_integer)
+    ASTERISK                    [reduce using rule 27 (number_float)]
+    ASTERISK                    [reduce using rule 55 (spectrum)]
+    RPAREN                      reduce using rule 17 (number_integer)
+    RPAREN                      [reduce using rule 27 (number_float)]
+    RPAREN                      [reduce using rule 55 (spectrum)]
+    RCURL                       reduce using rule 17 (number_integer)
+    RCURL                       [reduce using rule 27 (number_float)]
+    RCURL                       [reduce using rule 55 (spectrum)]
+    DOLLAR                      reduce using rule 17 (number_integer)
+    DOLLAR                      [reduce using rule 27 (number_float)]
+    DOLLAR                      [reduce using rule 55 (spectrum)]
+    IDENTIFIER                  reduce using rule 17 (number_integer)
+    IDENTIFIER                  [reduce using rule 27 (number_float)]
+    IDENTIFIER                  [reduce using rule 55 (spectrum)]
+    IMAGE                       reduce using rule 17 (number_integer)
+    IMAGE                       [reduce using rule 27 (number_float)]
+    IMAGE                       [reduce using rule 55 (spectrum)]
+    CAMERA                      reduce using rule 17 (number_integer)
+    CAMERA                      [reduce using rule 27 (number_float)]
+    CAMERA                      [reduce using rule 55 (spectrum)]
+    MATERIAL_KA                 reduce using rule 17 (number_integer)
+    MATERIAL_KA                 [reduce using rule 27 (number_float)]
+    MATERIAL_KA                 [reduce using rule 55 (spectrum)]
+    MATERIAL_REFLECTED_COLOR    reduce using rule 17 (number_integer)
+    MATERIAL_REFLECTED_COLOR    [reduce using rule 27 (number_float)]
+    MATERIAL_REFLECTED_COLOR    [reduce using rule 55 (spectrum)]
+    MATERIAL_TRANSMITTED_COLOR  reduce using rule 17 (number_integer)
+    MATERIAL_TRANSMITTED_COLOR  [reduce using rule 27 (number_float)]
+    MATERIAL_TRANSMITTED_COLOR  [reduce using rule 55 (spectrum)]
+    MATERIAL_IOR                reduce using rule 17 (number_integer)
+    MATERIAL_IOR                [reduce using rule 27 (number_float)]
+    MATERIAL_IOR                [reduce using rule 55 (spectrum)]
+    SPHERE                      reduce using rule 17 (number_integer)
+    SPHERE                      [reduce using rule 27 (number_float)]
+    SPHERE                      [reduce using rule 55 (spectrum)]
+    PLANE                       reduce using rule 17 (number_integer)
+    PLANE                       [reduce using rule 27 (number_float)]
+    PLANE                       [reduce using rule 55 (spectrum)]
+    BOX                         reduce using rule 17 (number_integer)
+    BOX                         [reduce using rule 27 (number_float)]
+    BOX                         [reduce using rule 55 (spectrum)]
+    DISC                        reduce using rule 17 (number_integer)
+    DISC                        [reduce using rule 27 (number_float)]
+    DISC                        [reduce using rule 55 (spectrum)]
+    MESH                        reduce using rule 17 (number_integer)
+    MESH                        [reduce using rule 27 (number_float)]
+    MESH                        [reduce using rule 55 (spectrum)]
+    KDTREE                      reduce using rule 17 (number_integer)
+    KDTREE                      [reduce using rule 27 (number_float)]
+    KDTREE                      [reduce using rule 55 (spectrum)]
+    GROUP                       reduce using rule 17 (number_integer)
+    GROUP                       [reduce using rule 27 (number_float)]
+    GROUP                       [reduce using rule 55 (spectrum)]
+    TRANSFORMED_OBJECT          reduce using rule 17 (number_integer)
+    TRANSFORMED_OBJECT          [reduce using rule 27 (number_float)]
+    TRANSFORMED_OBJECT          [reduce using rule 55 (spectrum)]
+    POINTLIGHT                  reduce using rule 17 (number_integer)
+    POINTLIGHT                  [reduce using rule 27 (number_float)]
+    POINTLIGHT                  [reduce using rule 55 (spectrum)]
+    TRIANGLELIGHT               reduce using rule 17 (number_integer)
+    TRIANGLELIGHT               [reduce using rule 27 (number_float)]
+    TRIANGLELIGHT               [reduce using rule 55 (spectrum)]
+    $default                    reduce using rule 17 (number_integer)
+
+
+state 143
+
+   54 spectrum: number .
+
+    $default  reduce using rule 54 (spectrum)
+
+
+state 144
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+  104 pointlight: POINTLIGHT LCURL vector_expr spectrum_expr . RCURL
+
+    PLUS   shift, and go to state 160
+    MINUS  shift, and go to state 161
+    RCURL  shift, and go to state 185
+
+
+state 145
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr vector_expr . vector_expr spectrum_expr RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 186
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 146
+
+   17 number_integer: IDENTIFIER .
+   27 number_float: IDENTIFIER .
+   38 vector: IDENTIFIER .
+   55 spectrum: IDENTIFIER .
+
+    PLUS      reduce using rule 17 (number_integer)
+    PLUS      [reduce using rule 27 (number_float)]
+    PLUS      [reduce using rule 38 (vector)]
+    PLUS      [reduce using rule 55 (spectrum)]
+    MINUS     reduce using rule 17 (number_integer)
+    MINUS     [reduce using rule 27 (number_float)]
+    MINUS     [reduce using rule 38 (vector)]
+    MINUS     [reduce using rule 55 (spectrum)]
+    ASTERISK  reduce using rule 17 (number_integer)
+    ASTERISK  [reduce using rule 27 (number_float)]
+    ASTERISK  [reduce using rule 38 (vector)]
+    ASTERISK  [reduce using rule 55 (spectrum)]
+    SLASH     reduce using rule 17 (number_integer)
+    SLASH     [reduce using rule 27 (number_float)]
+    RPAREN    reduce using rule 17 (number_integer)
+    RPAREN    [reduce using rule 27 (number_float)]
+    RPAREN    [reduce using rule 38 (vector)]
+    RPAREN    [reduce using rule 55 (spectrum)]
+    $default  reduce using rule 17 (number_integer)
+
+
+state 147
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   14 factor: LPAREN expr . RPAREN
+
+    PLUS    shift, and go to state 152
+    MINUS   shift, and go to state 153
+    RPAREN  shift, and go to state 187
+
+
+state 148
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   24 float_factor: LPAREN float_expr . RPAREN
+
+    PLUS    shift, and go to state 156
+    MINUS   shift, and go to state 157
+    RPAREN  shift, and go to state 188
+
+
+state 149
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   50 spectrum_factor: LPAREN spectrum_expr . RPAREN
+
+    PLUS    shift, and go to state 160
+    MINUS   shift, and go to state 161
+    RPAREN  shift, and go to state 189
+
+
+state 150
+
+   52 spectrum: LSQ number . COMMA number COMMA number RSQ
+   53         | LSQ number . number number RSQ
+
+    COMMA           shift, and go to state 190
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 191
+
+
+state 151
+
+   70 diffuse_material: MATERIAL LCURL . MATERIAL_KD spectrum_expr RCURL
+   71 ambient_material: MATERIAL LCURL . MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr RCURL
+   72 reflective_material: MATERIAL LCURL . MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL . MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    MATERIAL_KD  shift, and go to state 192
+
+
+state 152
+
+    8 expr: expr PLUS . term
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    term            go to state 193
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 153
+
+    9 expr: expr MINUS . term
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    term            go to state 194
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 154
+
+   11 term: term ASTERISK . number_integer
+
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    number_integer  go to state 195
+
+
+state 155
+
+   12 term: term SLASH . number_integer
+
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    number_integer  go to state 196
+
+
+state 156
+
+   18 float_expr: float_expr PLUS . float_term
+
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_term      go to state 197
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 157
+
+   19 float_expr: float_expr MINUS . float_term
+
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_term      go to state 198
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 158
+
+   21 float_term: float_term ASTERISK . number
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 199
+
+
+state 159
+
+   22 float_term: float_term SLASH . number
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 200
+
+
+state 160
+
+   45 spectrum_expr: spectrum_expr PLUS . spectrum_term
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_term    go to state 201
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 161
+
+   46 spectrum_expr: spectrum_expr MINUS . spectrum_term
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_term    go to state 202
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 162
+
+   48 spectrum_term: spectrum_term ASTERISK . number
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 203
+
+
+state 163
+
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT . expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 204
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 164
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN . vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 205
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 165
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN . vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 206
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 166
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   58 camera: CAMERA LCURL camera_declaration CAMERA_LOOKAT vector_expr . RCURL
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+    RCURL  shift, and go to state 207
+
+
+state 167
+
+   35 vector_factor: LPAREN vector_expr RPAREN .
+
+    $default  reduce using rule 35 (vector_factor)
+
+
+state 168
+
+   39 vector_declaration: LANG number COMMA . number COMMA number RANG
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 208
+
+
+state 169
+
+   40 vector_declaration: LANG number number . number RANG
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 209
+
+
+state 170
+
+   30 vector_expr: vector_expr PLUS vector_term .
+   33 vector_term: vector_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 125
+
+    $default  reduce using rule 30 (vector_expr)
+
+
+state 171
+
+   31 vector_expr: vector_expr MINUS vector_term .
+   33 vector_term: vector_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 125
+
+    $default  reduce using rule 31 (vector_expr)
+
+
+state 172
+
+   83 sphere: SPHERE LCURL vector_expr float_expr material . RCURL
+
+    RCURL  shift, and go to state 210
+
+
+state 173
+
+   33 vector_term: vector_term ASTERISK number .
+
+    $default  reduce using rule 33 (vector_term)
+
+
+state 174
+
+   84 plane: PLANE LCURL vector_expr float_expr material . RCURL
+
+    RCURL  shift, and go to state 211
+
+
+state 175
+
+   85 box: BOX LCURL vector_expr vector_expr material . RCURL
+
+    RCURL  shift, and go to state 212
+
+
+state 176
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   86 disc: DISC LCURL vector_expr vector_expr float_expr . material RCURL
+
+    PLUS        shift, and go to state 156
+    MINUS       shift, and go to state 157
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 213
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 177
+
+   88 mesh: MESH LCURL KDTREE_LEAFSIZE expr filename . material RCURL
+
+    IDENTIFIER  shift, and go to state 130
+    MATERIAL    shift, and go to state 86
+
+    material              go to state 214
+    material_declaration  go to state 102
+    diffuse_material      go to state 103
+    ambient_material      go to state 104
+    reflective_material   go to state 105
+    transparent_material  go to state 106
+
+
+state 178
+
+   87 mesh: MESH LCURL filename material RCURL .
+
+    $default  reduce using rule 87 (mesh)
+
+
+state 179
+
+   91 kdtree: KDTREE LCURL KDTREE_LEAFSIZE expr objects . RCURL
+   93 objects: objects . object
+
+    RCURL               shift, and go to state 215
+    IDENTIFIER          shift, and go to state 75
+    SPHERE              shift, and go to state 7
+    PLANE               shift, and go to state 8
+    BOX                 shift, and go to state 9
+    DISC                shift, and go to state 10
+    MESH                shift, and go to state 11
+    KDTREE              shift, and go to state 12
+    GROUP               shift, and go to state 13
+    TRANSFORMED_OBJECT  shift, and go to state 14
+
+    object              go to state 134
+    sphere              go to state 21
+    plane               go to state 22
+    box                 go to state 23
+    disc                go to state 24
+    mesh                go to state 25
+    kdtree              go to state 26
+    group               go to state 27
+    transformed_object  go to state 28
+
+
+state 180
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   98 transform: TRANSLATE vector_expr .
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+
+    $default  reduce using rule 98 (transform)
+
+
+state 181
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   99 transform: ROTATE vector_expr .
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+
+    $default  reduce using rule 99 (transform)
+
+
+state 182
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  100 transform: SCALE vector_expr .
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+
+    $default  reduce using rule 100 (transform)
+
+
+state 183
+
+   95 transformed_object: TRANSFORMED_OBJECT LCURL object transforms RCURL .
+
+    $default  reduce using rule 95 (transformed_object)
+
+
+state 184
+
+   96 transforms: transforms transform .
+
+    $default  reduce using rule 96 (transforms)
+
+
+state 185
+
+  104 pointlight: POINTLIGHT LCURL vector_expr spectrum_expr RCURL .
+
+    $default  reduce using rule 104 (pointlight)
+
+
+state 186
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr vector_expr vector_expr . spectrum_expr RCURL
+
+    PLUS            shift, and go to state 120
+    MINUS           shift, and go to state 121
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 216
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 187
+
+   14 factor: LPAREN expr RPAREN .
+
+    $default  reduce using rule 14 (factor)
+
+
+state 188
+
+   24 float_factor: LPAREN float_expr RPAREN .
+
+    $default  reduce using rule 24 (float_factor)
+
+
+state 189
+
+   50 spectrum_factor: LPAREN spectrum_expr RPAREN .
+
+    $default  reduce using rule 50 (spectrum_factor)
+
+
+state 190
+
+   52 spectrum: LSQ number COMMA . number COMMA number RSQ
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 217
+
+
+state 191
+
+   53 spectrum: LSQ number number . number RSQ
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 218
+
+
+state 192
+
+   70 diffuse_material: MATERIAL LCURL MATERIAL_KD . spectrum_expr RCURL
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD . spectrum_expr MATERIAL_KA spectrum_expr RCURL
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD . spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD . spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 219
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 193
+
+    8 expr: expr PLUS term .
+   11 term: term . ASTERISK number_integer
+   12     | term . SLASH number_integer
+
+    ASTERISK  shift, and go to state 154
+    SLASH     shift, and go to state 155
+
+    $default  reduce using rule 8 (expr)
+
+
+state 194
+
+    9 expr: expr MINUS term .
+   11 term: term . ASTERISK number_integer
+   12     | term . SLASH number_integer
+
+    ASTERISK  shift, and go to state 154
+    SLASH     shift, and go to state 155
+
+    $default  reduce using rule 9 (expr)
+
+
+state 195
+
+   11 term: term ASTERISK number_integer .
+
+    $default  reduce using rule 11 (term)
+
+
+state 196
+
+   12 term: term SLASH number_integer .
+
+    $default  reduce using rule 12 (term)
+
+
+state 197
+
+   18 float_expr: float_expr PLUS float_term .
+   21 float_term: float_term . ASTERISK number
+   22           | float_term . SLASH number
+
+    ASTERISK  shift, and go to state 158
+    SLASH     shift, and go to state 159
+
+    $default  reduce using rule 18 (float_expr)
+
+
+state 198
+
+   19 float_expr: float_expr MINUS float_term .
+   21 float_term: float_term . ASTERISK number
+   22           | float_term . SLASH number
+
+    ASTERISK  shift, and go to state 158
+    SLASH     shift, and go to state 159
+
+    $default  reduce using rule 19 (float_expr)
+
+
+state 199
+
+   21 float_term: float_term ASTERISK number .
+
+    $default  reduce using rule 21 (float_term)
+
+
+state 200
+
+   22 float_term: float_term SLASH number .
+
+    $default  reduce using rule 22 (float_term)
+
+
+state 201
+
+   45 spectrum_expr: spectrum_expr PLUS spectrum_term .
+   48 spectrum_term: spectrum_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 162
+
+    $default  reduce using rule 45 (spectrum_expr)
+
+
+state 202
+
+   46 spectrum_expr: spectrum_expr MINUS spectrum_term .
+   48 spectrum_term: spectrum_term . ASTERISK number
+
+    ASTERISK  shift, and go to state 162
+
+    $default  reduce using rule 46 (spectrum_expr)
+
+
+state 203
+
+   48 spectrum_term: spectrum_term ASTERISK number .
+
+    $default  reduce using rule 48 (spectrum_term)
+
+
+state 204
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr . IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    PLUS           shift, and go to state 152
+    MINUS          shift, and go to state 153
+    IMAGE_SAMPLES  shift, and go to state 220
+
+
+state 205
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr . CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    PLUS       shift, and go to state 120
+    MINUS      shift, and go to state 121
+    CAMERA_UP  shift, and go to state 221
+
+
+state 206
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr . CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL
+
+    PLUS       shift, and go to state 120
+    MINUS      shift, and go to state 121
+    CAMERA_UP  shift, and go to state 222
+
+
+state 207
+
+   58 camera: CAMERA LCURL camera_declaration CAMERA_LOOKAT vector_expr RCURL .
+
+    $default  reduce using rule 58 (camera)
+
+
+state 208
+
+   39 vector_declaration: LANG number COMMA number . COMMA number RANG
+
+    COMMA  shift, and go to state 223
+
+
+state 209
+
+   40 vector_declaration: LANG number number number . RANG
+
+    RANG  shift, and go to state 224
+
+
+state 210
+
+   83 sphere: SPHERE LCURL vector_expr float_expr material RCURL .
+
+    $default  reduce using rule 83 (sphere)
+
+
+state 211
+
+   84 plane: PLANE LCURL vector_expr float_expr material RCURL .
+
+    $default  reduce using rule 84 (plane)
+
+
+state 212
+
+   85 box: BOX LCURL vector_expr vector_expr material RCURL .
+
+    $default  reduce using rule 85 (box)
+
+
+state 213
+
+   86 disc: DISC LCURL vector_expr vector_expr float_expr material . RCURL
+
+    RCURL  shift, and go to state 225
+
+
+state 214
+
+   88 mesh: MESH LCURL KDTREE_LEAFSIZE expr filename material . RCURL
+
+    RCURL  shift, and go to state 226
+
+
+state 215
+
+   91 kdtree: KDTREE LCURL KDTREE_LEAFSIZE expr objects RCURL .
+
+    $default  reduce using rule 91 (kdtree)
+
+
+state 216
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr vector_expr vector_expr spectrum_expr . RCURL
+
+    PLUS   shift, and go to state 160
+    MINUS  shift, and go to state 161
+    RCURL  shift, and go to state 227
+
+
+state 217
+
+   52 spectrum: LSQ number COMMA number . COMMA number RSQ
+
+    COMMA  shift, and go to state 228
+
+
+state 218
+
+   53 spectrum: LSQ number number number . RSQ
+
+    RSQ  shift, and go to state 229
+
+
+state 219
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   70 diffuse_material: MATERIAL LCURL MATERIAL_KD spectrum_expr . RCURL
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD spectrum_expr . MATERIAL_KA spectrum_expr RCURL
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr . MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr . MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    PLUS         shift, and go to state 160
+    MINUS        shift, and go to state 161
+    RCURL        shift, and go to state 230
+    MATERIAL_KA  shift, and go to state 231
+
+
+state 220
+
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES . expr IMAGE_BACKGROUND spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 109
+    NUMBER_INTEGER  shift, and go to state 58
+    IDENTIFIER      shift, and go to state 110
+
+    expr            go to state 232
+    term            go to state 88
+    factor          go to state 89
+    number_integer  go to state 112
+
+
+state 221
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP . vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 233
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 222
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP . vector_expr CAMERA_RIGHT vector_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 234
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 223
+
+   39 vector_declaration: LANG number COMMA number COMMA . number RANG
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 235
+
+
+state 224
+
+   40 vector_declaration: LANG number number number RANG .
+
+    $default  reduce using rule 40 (vector_declaration)
+
+
+state 225
+
+   86 disc: DISC LCURL vector_expr vector_expr float_expr material RCURL .
+
+    $default  reduce using rule 86 (disc)
+
+
+state 226
+
+   88 mesh: MESH LCURL KDTREE_LEAFSIZE expr filename material RCURL .
+
+    $default  reduce using rule 88 (mesh)
+
+
+state 227
+
+  105 trianglelight: TRIANGLELIGHT LCURL vector_expr vector_expr vector_expr spectrum_expr RCURL .
+
+    $default  reduce using rule 105 (trianglelight)
+
+
+state 228
+
+   52 spectrum: LSQ number COMMA number COMMA . number RSQ
+
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    number_float    go to state 62
+    number          go to state 236
+
+
+state 229
+
+   53 spectrum: LSQ number number number RSQ .
+
+    $default  reduce using rule 53 (spectrum)
+
+
+state 230
+
+   70 diffuse_material: MATERIAL LCURL MATERIAL_KD spectrum_expr RCURL .
+
+    $default  reduce using rule 70 (diffuse_material)
+
+
+state 231
+
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA . spectrum_expr RCURL
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA . spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA . spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 237
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 232
+
+    8 expr: expr . PLUS term
+    9     | expr . MINUS term
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr . IMAGE_BACKGROUND spectrum_expr RCURL
+
+    PLUS              shift, and go to state 152
+    MINUS             shift, and go to state 153
+    IMAGE_BACKGROUND  shift, and go to state 238
+
+
+state 233
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr . CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL
+
+    PLUS          shift, and go to state 120
+    MINUS         shift, and go to state 121
+    CAMERA_RIGHT  shift, and go to state 239
+
+
+state 234
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr . CAMERA_RIGHT vector_expr RCURL
+
+    PLUS          shift, and go to state 120
+    MINUS         shift, and go to state 121
+    CAMERA_RIGHT  shift, and go to state 240
+
+
+state 235
+
+   39 vector_declaration: LANG number COMMA number COMMA number . RANG
+
+    RANG  shift, and go to state 241
+
+
+state 236
+
+   52 spectrum: LSQ number COMMA number COMMA number . RSQ
+
+    RSQ  shift, and go to state 242
+
+
+state 237
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr . RCURL
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr . MATERIAL_REFLECTED_COLOR spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr . MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    PLUS                      shift, and go to state 160
+    MINUS                     shift, and go to state 161
+    RCURL                     shift, and go to state 243
+    MATERIAL_REFLECTED_COLOR  shift, and go to state 244
+
+
+state 238
+
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND . spectrum_expr RCURL
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 245
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 239
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT . vector_expr CAMERA_ANGLE float_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 246
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 240
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT . vector_expr RCURL
+
+    LPAREN          shift, and go to state 53
+    LANG            shift, and go to state 54
+    XVECTOR         shift, and go to state 55
+    YVECTOR         shift, and go to state 56
+    ZVECTOR         shift, and go to state 57
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 60
+
+    number_integer      go to state 61
+    number_float        go to state 62
+    number              go to state 63
+    vector_expr         go to state 247
+    vector_term         go to state 65
+    vector_factor       go to state 66
+    vector              go to state 67
+    vector_declaration  go to state 68
+
+
+state 241
+
+   39 vector_declaration: LANG number COMMA number COMMA number RANG .
+
+    $default  reduce using rule 39 (vector_declaration)
+
+
+state 242
+
+   52 spectrum: LSQ number COMMA number COMMA number RSQ .
+
+    $default  reduce using rule 52 (spectrum)
+
+
+state 243
+
+   71 ambient_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr RCURL .
+
+    $default  reduce using rule 71 (ambient_material)
+
+
+state 244
+
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR . spectrum_expr RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR . spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 248
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 245
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr . RCURL
+
+    PLUS   shift, and go to state 160
+    MINUS  shift, and go to state 161
+    RCURL  shift, and go to state 249
+
+
+state 246
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr . CAMERA_ANGLE float_expr RCURL
+
+    PLUS          shift, and go to state 120
+    MINUS         shift, and go to state 121
+    CAMERA_ANGLE  shift, and go to state 250
+
+
+state 247
+
+   30 vector_expr: vector_expr . PLUS vector_term
+   31            | vector_expr . MINUS vector_term
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr . RCURL
+
+    PLUS   shift, and go to state 120
+    MINUS  shift, and go to state 121
+    RCURL  shift, and go to state 251
+
+
+state 248
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr . RCURL
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr . MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    PLUS                        shift, and go to state 160
+    MINUS                       shift, and go to state 161
+    RCURL                       shift, and go to state 252
+    MATERIAL_TRANSMITTED_COLOR  shift, and go to state 253
+
+
+state 249
+
+   56 image: IMAGE LCURL IMAGE_WIDTH expr IMAGE_HEIGHT expr IMAGE_SAMPLES expr IMAGE_BACKGROUND spectrum_expr RCURL .
+
+    $default  reduce using rule 56 (image)
+
+
+state 250
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE . float_expr RCURL
+
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 254
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 251
+
+   63 orthographic_camera: ORTHOGRAPHIC_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr RCURL .
+
+    $default  reduce using rule 63 (orthographic_camera)
+
+
+state 252
+
+   72 reflective_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr RCURL .
+
+    $default  reduce using rule 72 (reflective_material)
+
+
+state 253
+
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR . spectrum_expr MATERIAL_IOR float_expr RCURL
+
+    LPAREN          shift, and go to state 141
+    LSQ             shift, and go to state 84
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 142
+
+    number_integer   go to state 61
+    number_float     go to state 62
+    number           go to state 143
+    spectrum_expr    go to state 255
+    spectrum_term    go to state 97
+    spectrum_factor  go to state 98
+    spectrum         go to state 99
+
+
+state 254
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr . RCURL
+
+    PLUS   shift, and go to state 156
+    MINUS  shift, and go to state 157
+    RCURL  shift, and go to state 256
+
+
+state 255
+
+   45 spectrum_expr: spectrum_expr . PLUS spectrum_term
+   46              | spectrum_expr . MINUS spectrum_term
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr . MATERIAL_IOR float_expr RCURL
+
+    PLUS          shift, and go to state 160
+    MINUS         shift, and go to state 161
+    MATERIAL_IOR  shift, and go to state 257
+
+
+state 256
+
+   62 perspective_camera: PERSPECTIVE_CAMERA LCURL CAMERA_ORIGIN vector_expr CAMERA_UP vector_expr CAMERA_RIGHT vector_expr CAMERA_ANGLE float_expr RCURL .
+
+    $default  reduce using rule 62 (perspective_camera)
+
+
+state 257
+
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR . float_expr RCURL
+
+    LPAREN          shift, and go to state 122
+    NUMBER_INTEGER  shift, and go to state 58
+    NUMBER_FLOAT    shift, and go to state 59
+    IDENTIFIER      shift, and go to state 118
+
+    number_integer  go to state 61
+    float_expr      go to state 258
+    float_term      go to state 92
+    float_factor    go to state 93
+    number_float    go to state 62
+    number          go to state 124
+
+
+state 258
+
+   18 float_expr: float_expr . PLUS float_term
+   19           | float_expr . MINUS float_term
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr . RCURL
+
+    PLUS   shift, and go to state 156
+    MINUS  shift, and go to state 157
+    RCURL  shift, and go to state 259
+
+
+state 259
+
+   73 transparent_material: MATERIAL LCURL MATERIAL_KD spectrum_expr MATERIAL_KA spectrum_expr MATERIAL_REFLECTED_COLOR spectrum_expr MATERIAL_TRANSMITTED_COLOR spectrum_expr MATERIAL_IOR float_expr RCURL .
+
+    $default  reduce using rule 73 (transparent_material)

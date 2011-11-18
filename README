@@ -1,0 +1,2 @@
+This is Ray Tracer I've been working on between other projects. It has it's own parser written in Flex/Yacc, supports basic Monte-Carlo sampling and has a Kd-tree accelerator.
+I'm not working on it at the moment, but adding it to github for future use.

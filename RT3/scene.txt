@@ -1,0 +1,39 @@
+Film{
+	width 1366
+	height 768
+	samples 1
+	background [0.02]
+}
+Camera{
+	Perspective{
+		origin <-30,50,50>
+		up <0,1,0>
+		right <1.8,0,0>
+		fov 45
+	}
+	look_at <5,0,10>
+}
+
+Disc{
+	<100,200,150> <100,200,150> 200 Material { kd [0] ka [1] }
+}
+Material mat = Material{
+	kd Image { "c:\Users\Shrey\Desktop\dump\L200-obj\truck_color-red.ppm" }
+	ka [0]
+	reflect Image { "c:\Users\Shrey\Desktop\dump\L200-obj\truck_refl_clean.ppm" 0.5 }
+}
+Plane {
+	<0,0,0> y
+	Material {
+		kd Checker { [0] [0.2] }
+		ka [0]
+		reflect Checker { [0.2] [0] }
+	}
+	scale <30>
+}
+
+Mesh{
+	leafsize 128
+	"c:\users\shrey\desktop\dump\l200-obj\l200-obj.obj"
+	Material mat
+}

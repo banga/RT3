@@ -1,0 +1,31 @@
+Film{
+	width 400
+	height 300
+	samples 10
+	background [0]
+}
+Camera{
+	Perspective{
+		origin <0,320,-1100>
+		up <0,1,0>
+		right <1.33,0,0>
+		fov 40
+	}
+	look_at <300,250,0>
+}
+Disc{
+	<0,0,0> y 10000
+	Material { 
+		kd Checker { [0] [0.1 0.25 0.3] scale <30,20,0> }
+		ka [0]
+		reflect Checker { [0.5] [0.25] scale <30,20,0> } 
+	}
+}
+PointLight{
+	<400,250,0> [500]
+}
+Mesh{
+	leafsize 128
+	"c:\users\shrey\desktop\dump\Hookah_Akbars_OBJ\Hookah_Akbars_OBJ.obj"
+	Material { kd [1 1 0.8]*0.5 ka [0] reflect [0.9] }
+}

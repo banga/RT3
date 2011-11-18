@@ -1,0 +1,69 @@
+/*
+	RAINBOW 
+	 Based on Rainbow-21630353
+*/
+Film{
+	width 300
+	height 300
+	samples 1000
+	background [0]
+}
+Camera{
+	Perspective{
+		origin <-200,250,-140>
+		up <0,1,0>
+		right <1.8,0,0>
+		fov 30
+	}
+	look_at <-125,80,0>
+}
+Sphere{
+	<-50,50,50> 50
+	Material { 
+		kd [1]
+		ka [0]
+		reflect [0.4]
+	}
+}
+Sphere{
+	<0,300,300> 150 Material { kd[0] ka[1] }
+}
+Sphere{
+	<0,300,-300> 150 Material { kd[0] ka[1] }
+}
+Cylinder{
+	<-250,-25,-10000> <-250,-25,10000> 25
+	Material { kd [1 0.5 1]*0.5 ka [0] reflect [0] }
+}
+Cylinder{
+	<-200,-25,-10000> <-200,-25,10000> 25
+	Material { kd [1 0.5 0.7] ka [0] reflect [0] }
+}
+Cylinder{
+	<-150,-25,-10000> <-150,-25,10000> 25
+	Material { kd [1 0.7 0.3] ka [0] reflect [0] }
+}
+Cylinder{
+	<-100,-25,-10000> <-100,-25,10000> 25
+	Material { kd [0.7 0.7 0.3] ka [0] reflect [0] }
+}
+Cylinder{
+	<-50,-25,-10000> <-50,-25,10000> 25
+	Material { kd [0.4 0.9 0.2] ka [0] reflect [0] }
+}
+Cylinder{
+	<0,-25,-10000> <0,-25,10000> 25
+	Material { kd [0.1 0.6 0.1] ka [0] reflect [0] }
+}
+Cylinder{
+	<50,-25,-10000> <50,-25,10000> 25
+	Material { kd [0 0.5 0] ka [0] reflect [0] }
+}
+Cylinder{
+	<100,-25,-10000> <100,-25,10000> 25
+	Material { kd [0 0.2 0.4] ka [0] reflect [0] }
+}
+Cylinder{
+	<150,-25,-10000> <150,-25,10000> 25
+	Material { kd [0 0.2 0.8] ka [0] reflect [0] }
+}

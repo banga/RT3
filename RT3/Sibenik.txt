@@ -1,0 +1,23 @@
+Film{
+	width 400
+	height 300
+	samples 1
+	background [0.2 0.2 0.2]
+}
+Camera{
+	Perspective{
+		origin <-2,0,0>
+		up <0,1,0>
+		right <1.33,0,0>
+		fov 40
+	}
+	look_at <2,-1,0>
+}
+PointLight{
+	<0,0,0> [1]
+}
+Mesh{
+	leafsize 256
+	"C:\~\c\My Documents\Visual Studio 2005\Projects\RT2\models\Sibenik\sibenik.obj"
+	Material { kd [0.8] }
+}
